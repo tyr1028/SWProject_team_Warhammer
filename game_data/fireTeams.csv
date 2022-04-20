@@ -1,0 +1,12 @@
+ft_id,kt_name,ft_name,seek_and_destroy,security,infiltration,recon
+1,Imperial Guard,Guardsman,0,1,0,0
+2,Imperial Guard,Tempestus Scion,1,1,1,1
+3,Space Marine,Intercessor,1,1,0,0
+4,Space Marine,Assault Intercessor,1,1,0,0
+5,Space Marine,Incursor,1,0,1,1
+6,Space Marine,Infiltrator,1,0,1,1
+7,Space Marine,Reiver,1,0,1,1
+8,Space Marine,Heavy Intercessor,1,1,0,0
+9,Space Marine,Tactical Marine,1,1,0,0
+10,Space Marine,Scout,1,0,1,1
+11,Space Marine,Deathwatch Veteran,1,1,0,0
