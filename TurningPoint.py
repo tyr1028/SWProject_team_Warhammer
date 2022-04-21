@@ -9,8 +9,11 @@ class firefightPhase:
         p1_agent_count = len(self.p1.ft1.agents)
         p2_agent_count = len(self.p2.ft1.agents)
 
-    def move(self):
-        pass
-
-    def shoot(self):
-        pass
+    def select_action(self):
+        print("액션: ")
+        action = input()
+        
+        if action == "move":
+            self.move()
+        elif action == "shoot":
+            self.shoot()
