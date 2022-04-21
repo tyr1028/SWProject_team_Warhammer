@@ -5,8 +5,8 @@ def select_agent(player):
 
     for agent in player.ft1.agents:
         agent_list.append(agent)
-    """for agent in player.ft2.agents:
-        target_list.append(agent)"""
+    for agent in player.ft2.agents:
+        agent_list.append(agent)
 
     for i in range(len(agent_list)):
         result = "%2d: "%i + agent_list[i].type
@@ -163,7 +163,7 @@ class Agent:
             total_damage += hit_crit*weapon.d_crit
             total_damage += hit*weapon.d
 
-            print("데미지: %2d" %total_damage)
+            # print("데미지: %2d" %total_damage)
 
             if total_damage >= target.w:
                 target.w = 0
