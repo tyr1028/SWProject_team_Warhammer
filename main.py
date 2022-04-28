@@ -11,11 +11,8 @@ p2 = Player()
 p1.select_kt("Imperial Guard")
 p2.select_kt("Space Marine")
 
-p1.select_ft1("Guardsman")
-p1.select_ft2("Tempestus Scion")
-
-p2.select_ft1("Intercessor")
-p2.select_ft2("Incursor")
+p1.select_ft()
+p2.select_ft()
 
 p1.ft1.create_agent("Trooper")
 p1.ft1.agents[0].set_stats(3,2,2,3,5,7)

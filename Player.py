@@ -1,4 +1,5 @@
 from Dice import *
+import csv
 
 def select_agent(player):
     agent_list = []
@@ -27,11 +28,57 @@ class Player:
     def select_kt(self, kt):
         self.kt = Killteam(kt) 
 
+    def select_ft(self):
+        ft_list = self.get_ft_csv()
+        for i in range(len(ft_list)):
+            text = str(i+1) + ": " + ft_list[i][2]
+            print(text, end=" ")
+
+        print("\n파이어팀1 선택: ", end ="")
+        user_input = int(input())
+        
+        selected_ft = ft_list[user_input-1][2]
+        ft1_archetypes = ft_list[user_input-1][3:]
+
+        self.select_ft1(selected_ft)
+
+        print("파이어팀2 선택: ", end ="")
+        user_input = int(input())
+        
+        selected_ft = ft_list[user_input-1][2]
+        ft2_archetypes = ft_list[user_input-1][3:]
+
+        self.select_ft2(selected_ft)
+        print(selected_ft)
+
+        self.ft1.set_archetypes(ft1_archetypes)
+        self.ft2.set_archetypes(ft2_archetypes)
+   
     def select_ft1(self, ft):
         self.ft1 = Fireteam(ft)
+        print("선택된 파이어팀: " + self.ft1.ft_type)
 
     def select_ft2(self, ft):
         self.ft2 = Fireteam(ft)
+        print("선택된 파이어팀: " + self.ft2.ft_type)
+
+    def get_ft_csv(self):
+        file = open('game_data/fireTeams.csv')
+        type(file)
+        csvreader = csv.reader(file)
+
+        header = []
+        header = next(csvreader)
+        header
+
+        rows = []
+        for row in csvreader:
+                if row[1] == self.kt.type:
+                    rows.append(row)
+
+        file.close()
+
+        return rows
 
 class Killteam:
     def __init__(self, kt):
