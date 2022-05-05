@@ -1,4 +1,4 @@
-from Dice import *
+from dice import *
 
 def select_agent(player):
     agent_list = []
@@ -10,7 +10,7 @@ def select_agent(player):
 
     for i in range(len(agent_list)):
         result = "%2d: "%i + agent_list[i].type
-        print(result, end = " ")
+        print(result, end = "  ")
     print()
 
     print("위 요원 중 선택: ", end="")
@@ -114,54 +114,54 @@ class Agent:
 
         dice_result = dice(weapon.a) # 선택한 무기의 a스탯만큼 주사위 굴림
 
-        hit, hit_crit, miss = 0, 0, 0
+        attacker_normal, attacker_crit, attacker_miss = 0, 0, 0
         for i in dice_result:
             if i == 6:                # 주사위 6나올 경우 치명타
-                hit_crit += 1
+                attacker_crit += 1
             elif i >= weapon.ws:      # 무기의 ws 수치보다 높을 경우 일반 히트
-                hit += 1
+                attacker_normal += 1
             else:
-                miss += 1
-        print("타격성공: %2d(평타: %2d, 치명타: %2d), 타격실패: %2d" %(hit+hit_crit, hit, hit_crit, miss))
+                attacker_miss += 1
+        print("타격성공: %2d(평타: %2d, 치명타: %2d), 타격실패: %2d" %(attacker_normal+attacker_crit, attacker_normal, attacker_crit, attacker_miss))
 
         dice_result = dice(target.df) # 수비하는 요원의 df수치 만큼 주사위 굴림
 
-        save, save_crit, wound = 0, 0, 0
+        defender_normal, defender_crit, defender_attacker_miss = 0, 0, 0
         for i in dice_result:
             if i == 6:
-                save_crit += 1        # 주사위 6나올 경우 크리티컬 수비
+                defender_crit += 1        # 주사위 6나올 경우 크리티컬 수비
             elif i >= target.sv:
-                save += 1             # 요원의 sv 수치보다 높을 경우 일반 수비
+                defender_normal += 1             # 요원의 sv 수치보다 높을 경우 일반 수비
             else:
-                wound += 1
-        print("수비성공: %2d(일반수비: %2d, 치명수비: %2d), 수비실패: %2d" %(save+save_crit, save, save_crit, wound))
+                defender_attacker_miss += 1
+        print("수비성공: %2d(일반수비: %2d, 치명수비: %2d), 수비실패: %2d" %(defender_normal+defender_crit, defender_normal, defender_crit, defender_attacker_miss))
 
-        if save_crit > 0:          
-            if save_crit <= hit_crit:   
-                hit_crit -= save_crit
-                save_crit = 0
+        if defender_crit > 0:          
+            if defender_crit <= attacker_crit:   
+                attacker_crit -= defender_crit
+                defender_crit = 0
             else:
-                save += save_crit - hit_crit
-                save_crit, hit_crit = 0, 0
-        if (hit_crit*2+hit) <= save:
+                defender_normal += defender_crit - attacker_crit
+                defender_crit, attacker_crit = 0, 0
+        if (attacker_crit*2+attacker_normal) <= defender_normal:
             print("수비 포인트가 같거나 더 많아서 공격이 상쇄됐습니다.")
         else:
             total_damage = 0
-            while save >= 2 and hit_crit > 0:
+            while defender_normal >= 2 and attacker_crit > 0:
                 print("일반수비 2개를 소모하여 치명타 1개를 상쇄(y/n): ", end ="")
                 user_input = input()
                 if user_input == "y":
-                    hit_crit -= 1
-                    save -= 2
+                    attacker_crit -= 1
+                    defender_normal -= 2
                 else:
                     break
-            if save >= hit:
-                hit = 0
+            if defender_normal >= attacker_normal:
+                attacker_normal = 0
             else: 
-                hit -= save
-                save = 0
-            total_damage += hit_crit*weapon.d_crit
-            total_damage += hit*weapon.d
+                attacker_normal -= defender_normal
+                defender_normal = 0
+            total_damage += attacker_crit*weapon.d_crit
+            total_damage += attacker_normal*weapon.d
 
             # print("데미지: %2d" %total_damage)
 
@@ -172,6 +172,34 @@ class Agent:
             else:
                 target.w -= total_damage
                 print("%2d만큼의 데미지를 받아 체력이 %2d 만큼 남았습니다" %(total_damage, target.w))
+
+    def fight(self, opponent):
+        target = select_agent(opponent) # 상대 player로부터 공격 대상 선택
+        weapon = self.select_weapon("Melee") # Melee 타입 무기 선택
+
+        dice_result = dice(weapon.a) # 선택한 무기의 a스탯만큼 주사위 굴림
+
+        attacker_normal, attacker_crit, attacker_miss = 0, 0, 0
+        for i in dice_result:
+            if i == 6:                # 주사위 6나올 경우 치명타
+                attacker_crit += 1
+            elif i >= weapon.ws:      # 무기의 ws 수치보다 높을 경우 일반 히트
+                attacker_normal += 1
+            else:
+                attacker_miss += 1
+        print("공격자 타격성공: %2d(평타: %2d, 치명타: %2d), 타격실패: %2d" %(attacker_normal+attacker_crit, attacker_normal, attacker_crit, attacker_miss))
+
+        dice_result = dice(target.df) # 수비하는 요원의 df수치 만큼 주사위 굴림
+
+        defender_normal, defender_crit, defender_attacker_miss = 0, 0, 0
+        for i in dice_result:
+            if i == 6:
+                defender_crit += 1        # 주사위 6나올 경우 크리티컬 수비
+            elif i >= target.sv:
+                defender_normal += 1             # 요원의 sv 수치보다 높을 경우 일반 수비
+            else:
+                defender_attacker_miss += 1
+        print("수비성공: %2d(일반수비: %2d, 치명수비: %2d), 수비실패: %2d" %(defender_normal+defender_crit, defender_normal, defender_crit, defender_attacker_miss))
 
 class Weapon:
     def __init__(self, weapon_name, type, variant = "default"):

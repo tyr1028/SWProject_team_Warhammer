@@ -1,5 +1,5 @@
 import os 
-import pygame
+#import pygame
 from Player import *
 from TurningPoint import *
 
@@ -38,9 +38,9 @@ p2.ft1.agents[0].weapons[3].set_stats(4, 3, 3, 4)
 p2.ft2.create_agent("Sergeant")
 p2.ft2.agents[0].set_stats(3,3,1,3,3,13)
 p2.ft2.agents[0].set_stats(3,3,1,3,3,13)
-p2.ft2.agents[0].create_weapon("Auto bolt rifle", "Ranged")
+p2.ft2.agents[0].create_weapon("Occulus bolt carbine", "Ranged")
 p2.ft2.agents[0].weapons[0].set_stats(4, 2, 3, 4)
-p2.ft2.agents[0].create_weapon("Fists", "Melee")
+p2.ft2.agents[0].create_weapon("Combat blade", "Melee")
 p2.ft2.agents[0].weapons[1].set_stats(4, 3, 3, 5)
 
 
@@ -49,4 +49,4 @@ p2.ft1.display_agents("Player 2, Fireteam 1")
 p2.ft2.display_agents("Player 2, Fireteam 2")
 
 #p1.ft1.agents[0].shoot(p2)
-p2.ft1.agents[0].shoot(p1)
+p2.ft2.agents[0].shoot(p1)
