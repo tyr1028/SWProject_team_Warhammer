@@ -46,4 +46,4 @@ p2.ft1.display_agents("Player 2, Fireteam 1")
 p2.ft2.display_agents("Player 2, Fireteam 2")
 
 #p1.ft1.agents[0].shoot(p2)
-p2.ft2.agents[0].shoot(p1)
+p2.ft2.agents[0].fight(p1)
