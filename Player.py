@@ -1,10 +1,8 @@
-<<<<<<< HEAD
-
-
-=======
 from Dice import *
 import csv
->>>>>>> efa9e63aa240c1b117d262074ab6cf0bcbd20b14
+from Dice import *
+import csv
+
 def select_agent(player):
     agent_list = []
 
