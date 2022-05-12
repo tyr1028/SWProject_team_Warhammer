@@ -151,8 +151,9 @@ class Agent:
         print(weapon_list[selected_weapon].weapon_name + " 선택")
         return weapon_list[selected_weapon]
     ################################# Firefight 페이즈에서 선택할 수 있는 요원의 Action 관련 #################################
-    def move(self): # 일반이동 (소모 ap 아직 구현 안 함)
-        pass
+    def move(self, pos_x, pos_y): # 일반이동 (소모 ap 아직 구현 안 함)
+        self.pos_x = pos_x
+        self.pos_y = pos_y
 
     def shoot(self, opponent): # 사격 (소모 ap 아직 구현 안 함)
         target = select_agent(opponent) # 상대 player로부터 공격 대상 선택
@@ -182,7 +183,7 @@ class Agent:
                 defender_attacker_miss += 1
         print("수비성공: %2d(일반수비: %2d, 치명수비: %2d), 수비실패: %2d" %(defender_normal+defender_crit, defender_normal, defender_crit, defender_attacker_miss))
 
-        if defender_crit > 0:          
+        if defender_crit > 0: 
             if defender_crit <= attacker_crit:   
                 attacker_crit -= defender_crit
                 defender_crit = 0
@@ -248,8 +249,9 @@ class Agent:
                 defender_attacker_miss += 1
         print("수비성공: %2d(일반수비: %2d, 치명수비: %2d), 수비실패: %2d" %(defender_normal+defender_crit, defender_normal, defender_crit, defender_attacker_miss))
 
+        turn = 0
+        
         for i in range(attacker_normal+attacker_crit+defender_normal+defender_crit):
-            turn = 0
             if (turn%2 == 0 or defender_normal+defender_crit == 0) and not attacker_normal + attacker_crit == 0:
                 while True:
                     print("공격자 턴 / 일반주사위(1): %2d, 치명주사위(2): %d 선택: "%(attacker_normal, attacker_crit), end="")
@@ -313,7 +315,7 @@ class Agent:
                             break
 
 
-            if (turn%2 == 1 or attacker_normal+attacker_crit == 0) and not defender_normal + defender_crit == 0:
+            elif (turn%2 == 1 or attacker_normal+attacker_crit == 0) and not defender_normal + defender_crit == 0:
                 while True:
                     print("수비자 턴 / 일반주사위(1): %2d, 치명주사위(2): %d 선택: "%(defender_normal, defender_crit), end="")
                     dice_choice = int(input())
@@ -375,6 +377,15 @@ class Agent:
                             turn += 1
                             break
 
+            if self.w <= 0:
+                print("공격자 요원이 처치됨")
+                self.isAlive = False
+                break
+            if target.w <= 0:
+                print("수비자 요원이 처치됨")
+                target.isAlive = False
+                break
+    
 class Weapon:
     def __init__(self, weapon_name, type, variant = "default"):
         self.weapon_name = weapon_name
