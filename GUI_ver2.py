@@ -63,7 +63,7 @@ class App(QWidget):
         btn_layout_2.addWidget(btnUn8)
         
         photo_label = QLabel()
-        photo_label.setPixmap(QPixmap('KakaoTalk_20220405_180751959.jpg'))
+        photo_label.setPixmap(QPixmap('field.png'))
 
         all_layout = QHBoxLayout()
         all_layout.addLayout(btn_layout_1)
