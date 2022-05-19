@@ -83,9 +83,6 @@ class App(QWidget):
     def btnRun_clicked(self):
         QMessageBox.about(self, "message", "Faction: Imperial Guard")
 
-    '''
-    화면의 가운데로 띄우기
-    '''
     def center(self):
         qr = self.frameGeometry()
         cp = QDesktopWidget().availableGeometry().center()
