@@ -2,6 +2,8 @@ import sys
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
+import cv2 as cv
+import numpy as np
 
 
 class App(QWidget):
@@ -13,7 +15,7 @@ class App(QWidget):
     def initUI(self):
         # 화면
         self.setWindowTitle('pyqt5 demo')
-        self.center() 
+        # self.center()
         self.resize(1500, 800)   
 
         # 1
@@ -61,7 +63,13 @@ class App(QWidget):
         btn_layout_2.addWidget(btnUn6)
         btn_layout_2.addWidget(btnUn7)
         btn_layout_2.addWidget(btnUn8)
-        
+
+        img = cv.imread('field.png', cv.IMREAD_COLOR)
+        for i in range(100, self.height(), int(self.height() / 5)):
+            cv.circle(img, (100, i), 5, (255, 255, 0), -1)
+            cv.circle(img, (1000, i), 5, (255, 0, 255), -1)
+        cv.imwrite('field.png', img)
+
         photo_label = QLabel()
         photo_label.setPixmap(QPixmap('field.png'))
 
@@ -86,7 +94,10 @@ class App(QWidget):
 
 
 if __name__ == '__main__':
-   app = QApplication(sys.argv)
-   ex = App()
-   ex.show()
-   app.exec_()
+    app = QApplication(sys.argv)
+    ex = App()
+    ex.show()
+    app.exec_()
+    img = cv.imread('field.png', cv.IMREAD_COLOR)
+    img = np.zeros((img.shape))
+    cv.imwrite('field.png', img)
