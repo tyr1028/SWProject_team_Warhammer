@@ -70,7 +70,7 @@ class App(QWidget):
         self.dialog.show()
 
     def dialog_close(self):
-        self.dialog.clsoe()
+        self.dialog.close()
 
     #def btn_stats(self):
         #self.m = m

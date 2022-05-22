@@ -1,7 +1,7 @@
 import os 
-#import pygame
 from Player import *
 from TurningPoint import *
+from GUI_ver2 import *
 
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
@@ -11,7 +11,10 @@ p2 = Player()
 p1.select_kt("Imperial Guard")
 p2.select_kt("Space Marine")
 
-p1.select_ft()
+gui = App(p1, p2)
+
+
+'''p1.select_ft()
 p2.select_ft()
 
 p1.ft1.create_agent("Trooper")
@@ -46,4 +49,4 @@ p2.ft1.display_agents("Player 2, Fireteam 1")
 p2.ft2.display_agents("Player 2, Fireteam 2")
 
 #p1.ft1.agents[0].shoot(p2)
-p2.ft2.agents[0].fight(p1)
+p2.ft2.agents[0].fight(p1)'''

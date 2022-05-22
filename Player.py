@@ -151,6 +151,17 @@ class Agent:
 
         print(weapon_list[selected_weapon].weapon_name + " 선택")
         return weapon_list[selected_weapon]
+
+    def select_action(self):
+        print("액션: ")
+        action = input()
+        
+        if action == "move":
+            self.move()
+        elif action == "shoot":
+            self.shoot()
+        elif action == "fight":
+            self.fight()
     ################################# Firefight 페이즈에서 선택할 수 있는 요원의 Action 관련 #################################
     def move(self, pos_x, pos_y): # 일반이동 (소모 ap 아직 구현 안 함)
         self.pos_x = pos_x
