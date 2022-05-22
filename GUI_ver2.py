@@ -72,15 +72,20 @@ class App(QWidget):
         btn_layout_2.addWidget(btnUn7)
         btn_layout_2.addWidget(btnUn8)
 
-        img = cv.imread('field.png', cv.IMREAD_COLOR)
+        self.location = []
+
+        self.img = cv.imread('field.png', cv.IMREAD_COLOR)
         for i in range(100, self.height(), int(self.height() / 5)):
-            cv.circle(img, (100, i), 5, (255, 255, 0), -1)
-            cv.circle(img, (1000, i), 5, (255, 0, 255), -1)
-        cv.imwrite('field.png', img)
+            self.location.append([100, i])
+            cv.circle(self.img, (100, i), 5, (255, 255, 0), -1)
+        for i in range(100, self.height(), int(self.height() / 5)):
+            self.location.append([1050, i])
+            cv.circle(self.img, (1050, i), 5, (255, 0, 255), -1)
+        cv.imwrite('field.png', self.img)
 
         photo_label = QLabel()
         photo_label.setPixmap(QPixmap('field.png'))
-        photo_label.mousePressEvent = self.doSomething
+        photo_label.mousePressEvent = self.click_event
 
         all_layout = QHBoxLayout()
         all_layout.addLayout(btn_layout_1)
@@ -92,12 +97,17 @@ class App(QWidget):
     def btnRun_clicked(self):
         QMessageBox.about(self, "message", "Faction: Imperial Guard")
 
-    def doSomething(self, event):
+    def click_event(self, event):
         if self.count % 2 == 0:
             self.x1 = event.pos().x()
-            self.y1 = event.pos().y() 
+            self.y1 = event.pos().y()
+
+            i = self.color_check(self.x1, self.y1)
+            if i == None:
+                count -= 1
 
             print("Hello, x: %3d, y: %3d" %(self.x1, self.y1))
+            print(i)
 
         else:
             x2 = event.pos().x()
@@ -108,6 +118,19 @@ class App(QWidget):
             self.target_range(self.x1, self.y1, x2, y2, 3)
         
         self.count += 1
+
+    def color_check(self, x1, y1):
+        result = 0
+        distance = 0
+        print(x1, y1)
+        print(self.img[x1][y1])
+        if self.img[x1][y1] == (0, 0, 0):
+            return None
+        else:
+            for i in len(self.location):
+                if dist((x1, y1), (self.location[i])) > distance:
+                    result = i
+            return result
 
     def target_range(self, x1, y1, x2, y2, range):
         '''dy = y2 - y1
@@ -123,9 +146,7 @@ class App(QWidget):
         if dist((x1, y1), (x2, y2)) > range*INCH:
             print("넘음")
         else:
-            print("통과")
-
-        
+            print("통과")      
         
 
     def agent_select_test(self, x, y):
