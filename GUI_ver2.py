@@ -4,13 +4,21 @@ from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 import cv2 as cv
 import numpy as np
+from math import *
 
+
+INCH = 35
 
 class App(QWidget):
-
-    def __init__(self):
+    def __init__(self, p1 = "", p2 = ""):
         super().__init__()
         self.initUI()
+        self.p1 = p1
+        self.p2 = p2
+
+        self.count = 0
+        self.x1 = 0
+        self.y1 = 0
 
     def initUI(self):
         # 화면
@@ -72,6 +80,7 @@ class App(QWidget):
 
         photo_label = QLabel()
         photo_label.setPixmap(QPixmap('field.png'))
+        photo_label.mousePressEvent = self.doSomething
 
         all_layout = QHBoxLayout()
         all_layout.addLayout(btn_layout_1)
@@ -82,6 +91,47 @@ class App(QWidget):
 
     def btnRun_clicked(self):
         QMessageBox.about(self, "message", "Faction: Imperial Guard")
+
+    def doSomething(self, event):
+        if self.count % 2 == 0:
+            self.x1 = event.pos().x()
+            self.y1 = event.pos().y() 
+
+            print("Hello, x: %3d, y: %3d" %(self.x1, self.y1))
+
+        else:
+            x2 = event.pos().x()
+            y2 = event.pos().y() 
+
+            print("Hello, x: %3d, y: %3d" %(x2, y2))
+
+            self.target_range(self.x1, self.y1, x2, y2, 3)
+        
+        self.count += 1
+
+    def target_range(self, x1, y1, x2, y2, range):
+        '''dy = y2 - y1
+        dx = x2 - x1
+        angle = atan(dy/dx) * (180.0/pi)
+        
+        if dx < 0:
+            angle += 180.0
+        else:
+            if(dy<0.0): angle += 360.0
+
+        angle = radians(angle)'''
+        if dist((x1, y1), (x2, y2)) > range*INCH:
+            print("넘음")
+        else:
+            print("통과")
+
+        
+        
+
+    def agent_select_test(self, x, y):
+        '''for agent in self.p1.ft1.agents:
+            if agent.'''
+        pass
 
     def center(self):
         qr = self.frameGeometry()

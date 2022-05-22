@@ -1,7 +1,5 @@
 from Dice import *
 import csv
-from Dice import *
-import csv
 
 def select_agent(player):
     agent_list = []
