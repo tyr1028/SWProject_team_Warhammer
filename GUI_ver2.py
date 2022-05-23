@@ -22,7 +22,7 @@ class App(QWidget):
         self.x1 = 0
         self.y1 = 0
 
-        print("1: %2d, 2: %2d, 3: %2d, 4: %2d, 5: %2d, 6: %2d" %(self.p1.ft1.agents[0].m, self.p1.ft1.agents[0].apl, self.p1.ft1.agents[0].ga, self.p1.ft1.agents[0].df, self.p1.ft1.agents[0].sv, self.p1.ft1.agents[0].w))
+        #print("m: %2d, apl: %2d, ga: %2d, df: %2d, sv: %2d, w: %2d" %(self.p1.ft1.agents[0].m, self.p1.ft1.agents[0].apl, self.p1.ft1.agents[0].ga, self.p1.ft1.agents[0].df, self.p1.ft1.agents[0].sv, self.p1.ft1.agents[0].w))
 
     def initUI(self):
         # 화면
@@ -33,36 +33,36 @@ class App(QWidget):
          # 1
         btnUn1 = QPushButton("unit1", self)		
         btnUn1.resize(150,50)
-        btnUn1.clicked.connect(self.window_open)	
+        btnUn1.clicked.connect(lambda :self.window_open(0))	
 
         btnUn2 = QPushButton("unit2", self)	
         btnUn2.resize(150,50)
-        btnUn2.clicked.connect(self.window_open)
+        btnUn2.clicked.connect(lambda :self.window_open(1))
 
         btnUn3 = QPushButton("unit3", self)	
         btnUn3.resize(150,50)
-        btnUn3.clicked.connect(self.window_open)
+        btnUn3.clicked.connect(lambda :self.window_open(2))
 
         btnUn4 = QPushButton("unit4", self)	
         btnUn4.resize(150,50)
-        btnUn4.clicked.connect(self.window_open)
+        btnUn4.clicked.connect(lambda :self.window_open(3))
 
         #2
         btnUn5 = QPushButton("unit5", self)	
         btnUn5.resize(150,50)
-        btnUn5.clicked.connect(self.window_open)
+        btnUn5.clicked.connect(lambda :self.window_open(4))
 
         btnUn6 = QPushButton("unit6", self)		
         btnUn6.resize(150,50)
-        btnUn6.clicked.connect(self.window_open)
+        btnUn6.clicked.connect(lambda :self.window_open(5))
         
         btnUn7 = QPushButton("unit7", self)	
         btnUn7.resize(150,50)
-        btnUn7.clicked.connect(self.window_open)	        
+        btnUn7.clicked.connect(lambda :self.window_open(6))	        
         
         btnUn8 = QPushButton("unit8", self)		
         btnUn8.resize(150,50)
-        btnUn8.clicked.connect(self.window_open)
+        btnUn8.clicked.connect(lambda :self.window_open(7))
 
         self.dialog = QDialog()
 
@@ -100,11 +100,17 @@ class App(QWidget):
 
         self.setLayout(all_layout)
 
-    def window_open(self):
+    def window_open(self, i =0):
 
         btnDialog = QPushButton("Close", self.dialog)
         btnDialog.move(200,400)
         btnDialog.clicked.connect(self.window_close)
+
+        container = QWidget(self.dialog)
+        container.setGeometry(QRect(0, 0, 500, 80))
+        about_text = QLabel(container)
+        about_text.setText("m: %2d, apl: %2d, ga: %2d, df: %2d, sv: %2d, w: %2d" %(self.p1.ft1.agents[i].m, self.p1.ft1.agents[i].apl, self.p1.ft1.agents[i].ga, self.p1.ft1.agents[i].df, self.p1.ft1.agents[i].sv, self.p1.ft1.agents[i].w))
+        self.dialog.show()
 
         self.dialog.setWindowTitle("Second window")
         self.dialog.setWindowModality(Qt.ApplicationModal)

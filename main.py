@@ -17,6 +17,21 @@ p2.select_ft()
 p1.ft1.create_agent("Trooper")
 p1.ft1.agents[0].set_stats(3,2,2,3,5,7)
 
+p1.ft1.create_agent("Trooper")
+p1.ft1.agents[1].set_stats(4,2,2,3,5,7)
+
+p1.ft1.create_agent("Trooper")
+p1.ft1.agents[2].set_stats(5,2,2,3,5,7)
+
+p1.ft1.create_agent("Trooper")
+p1.ft1.agents[3].set_stats(6,2,2,3,5,7)
+
+p1.ft1.create_agent("Trooper")
+p1.ft1.agents[4].set_stats(7,2,2,3,5,7)
+
+p1.ft1.create_agent("Trooper")
+p1.ft1.agents[5].set_stats(8,2,2,3,5,7)
+
 app = QApplication(sys.argv)
 ex = App(p1, p2)
 ex.show()
