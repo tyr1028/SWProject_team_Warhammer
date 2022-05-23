@@ -110,6 +110,7 @@ class App(QWidget):
         self.dialog.setWindowModality(Qt.ApplicationModal)
         self.dialog.resize(500, 500)
         self.dialog.show()
+        
 
     def window_close(self):
         self.dialog.close()

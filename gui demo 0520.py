@@ -67,7 +67,7 @@ class App(QWidget):
         self.dialog.setWindowTitle("Second window")
         self.dialog.setWindowModality(Qt.ApplicationModal)
         self.dialog.resize(500, 500)
-        self.dialog.show()
+        self.dialog.show(("1: %2d, 2: %2d, 3: %2d, 4: %2d, 5: %2d, 6: %2d" %(self.p1.ft1.agents[0].m, self.p1.ft1.agents[0].apl, self.p1.ft1.agents[0].ga, self.p1.ft1.agents[0].df, self.p1.ft1.agents[0].sv, self.p1.ft1.agents[0].w)))
 
     def window_close(self):
         self.dialog.close()
