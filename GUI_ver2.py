@@ -1,3 +1,4 @@
+import os 
 import sys
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
@@ -6,6 +7,7 @@ import cv2 as cv
 import numpy as np
 from math import *
 
+os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
 INCH = 35
 
@@ -19,6 +21,8 @@ class App(QWidget):
         self.count = 0
         self.x1 = 0
         self.y1 = 0
+
+        print("1: %2d, 2: %2d, 3: %2d, 4: %2d, 5: %2d, 6: %2d" %(self.p1.ft1.agents[0].m, self.p1.ft1.agents[0].apl, self.p1.ft1.agents[0].ga, self.p1.ft1.agents[0].df, self.p1.ft1.agents[0].sv, self.p1.ft1.agents[0].w))
 
     def initUI(self):
         # 화면

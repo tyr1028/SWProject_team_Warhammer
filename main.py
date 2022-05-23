@@ -11,15 +11,23 @@ p2 = Player()
 p1.select_kt("Imperial Guard")
 p2.select_kt("Space Marine")
 
-gui = App(p1, p2)
-
-
-'''p1.select_ft()
+p1.select_ft()
 p2.select_ft()
 
 p1.ft1.create_agent("Trooper")
 p1.ft1.agents[0].set_stats(3,2,2,3,5,7)
-p1.ft1.agents[0].create_weapon("Lasgun", "Ranged")
+
+app = QApplication(sys.argv)
+ex = App(p1, p2)
+ex.show()
+app.exec_()
+img = cv.imread('field.png', cv.IMREAD_COLOR)
+img = np.zeros((img.shape))
+cv.imwrite('field.png', img)
+
+
+
+'''p1.ft1.agents[0].create_weapon("Lasgun", "Ranged")
 p1.ft1.agents[0].weapons[0].set_stats(4, 4, 2, 3)
 p1.ft1.agents[0].create_weapon("Bayonet", "Melee")
 p1.ft1.agents[0].weapons[1].set_stats(3, 4, 2, 3)
