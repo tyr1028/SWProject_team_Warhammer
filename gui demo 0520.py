@@ -72,11 +72,10 @@ class App(QWidget):
     def dialog_close(self):
         self.dialog.close()
 
+
     #def btn_stats(self):
         #self.m = m
-
         #self.apl = apl
-
         #self.ga = ga
         #self.df = df
         #self.sv = sv
@@ -92,7 +91,6 @@ class App(QWidget):
         cp = QDesktopWidget().availableGeometry().center()
         qr.moveCenter(cp)
         self.move(qr.topLeft())
-
 
 if __name__ == '__main__':
    app = QApplication(sys.argv)
