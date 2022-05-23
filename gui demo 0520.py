@@ -17,59 +17,59 @@ class App(QWidget):
         btnUn1 = QPushButton("unit1", self)	
         btnUn1.move(80, 100)	
         btnUn1.resize(150,50)
-        btnUn1.clicked.connect(self.dialog_open)	
+        btnUn1.clicked.connect(self.window_open)	
 
         btnUn2 = QPushButton("unit2", self)	
         btnUn2.move(80, 200)	
         btnUn2.resize(150,50)
-        btnUn2.clicked.connect(self.dialog_open)
+        btnUn2.clicked.connect(self.window_open)
 
         btnUn3 = QPushButton("unit3", self)	
         btnUn3.move(80, 300)	
         btnUn3.resize(150,50)
-        btnUn3.clicked.connect(self.dialog_open)
+        btnUn3.clicked.connect(self.window_open)
 
         btnUn4 = QPushButton("unit4", self)	
         btnUn4.move(80, 400)	
         btnUn4.resize(150,50)
-        btnUn4.clicked.connect(self.dialog_open)
+        btnUn4.clicked.connect(self.window_open)
 
         #2
         btnUn5 = QPushButton("unit5", self)	
         btnUn5.move(1250, 100)	
         btnUn5.resize(150,50)
-        btnUn5.clicked.connect(self.dialog_open)
+        btnUn5.clicked.connect(self.window_open)
 
         btnUn6 = QPushButton("unit6", self)	
         btnUn6.move(1250, 200)	
         btnUn6.resize(150,50)
-        btnUn6.clicked.connect(self.dialog_open)
+        btnUn6.clicked.connect(self.window_open)
         
         btnUn7 = QPushButton("unit7", self)	
         btnUn7.move(1250, 300)	
         btnUn7.resize(150,50)
-        btnUn7.clicked.connect(self.dialog_open)	        
+        btnUn7.clicked.connect(self.window_open)	        
         
         btnUn8 = QPushButton("unit8", self)	
         btnUn8.move(1250, 400)	
         btnUn8.resize(150,50)
-        btnUn8.clicked.connect(self.dialog_open)
+        btnUn8.clicked.connect(self.window_open)
 
         self.dialog = QDialog()
 
 
-    def dialog_open(self):
+    def window_open(self):
 
         btnDialog = QPushButton("Close", self.dialog)
         btnDialog.move(200,400)
-        btnDialog.clicked.connect(self.dialog_close)
+        btnDialog.clicked.connect(self.window_close)
 
         self.dialog.setWindowTitle("Second window")
         self.dialog.setWindowModality(Qt.ApplicationModal)
         self.dialog.resize(500, 500)
         self.dialog.show()
 
-    def dialog_close(self):
+    def window_close(self):
         self.dialog.close()
 
 
