@@ -63,16 +63,16 @@ class App(QWidget):
         
 
         # 테이블
-        self.tableWidget = QTableWidget()
-        self.tableWidget.setRowCount(4)
-        self.tableWidget.setColumnCount(4)
+        tableWidget = QTableWidget()
+        tableWidget.setRowCount(4)
+        tableWidget.setColumnCount(4)
 
-        self.tableWidget.setEditTriggers(QAbstractItemView.NoEditTriggers)
-        self.tableWidget.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
+        tableWidget.setEditTriggers(QAbstractItemView.NoEditTriggers)
+        tableWidget.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
 
         layout = QVBoxLayout()
         dialog.setLayout(layout)
-        dialog.layout().addWidget(self.tableWidget)
+        layout.addWidget(tableWidget)
 
         """self.setWindowTitle('QTableWidget')
         self.setWindowModality(Qt.ApplicationModal)
