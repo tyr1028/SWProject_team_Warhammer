@@ -55,16 +55,12 @@ class App(QWidget):
         btnUn8.resize(150,50)
         btnUn8.clicked.connect(self.window_open)
 
-        self.dialog = QDialog()
-
-        
-
-
     def window_open(self):
-
-        btnDialog = QPushButton("Close", self.dialog)
-        btnDialog.move(200,400)
-        btnDialog.clicked.connect(self.window_close)
+        dialog = QDialog()
+        #btnDialog = QPushButton("Close", dialog)
+        #btnDialog.move(200,400)
+        #btnDialog.clicked.connect(self.window_close)
+        
 
         # 테이블
         self.tableWidget = QTableWidget()
@@ -75,22 +71,27 @@ class App(QWidget):
         self.tableWidget.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
 
         layout = QVBoxLayout()
-        layout.addWidget(self.tableWidget)
-        self.setLayout(layout)
+        dialog.setLayout(layout)
+        dialog.layout().addWidget(self.tableWidget)
 
-        self.setWindowTitle('QTableWidget')
+        """self.setWindowTitle('QTableWidget')
         self.setWindowModality(Qt.ApplicationModal)
         self.setGeometry(300, 100, 600, 400)
-        self.show()
+        self.show()"""
 
-        self.dialog.setWindowTitle("Second window")
-        self.dialog.setWindowModality(Qt.ApplicationModal)
-        self.dialog.resize(500, 500)
-        self.dialog.show()
-        #self.dialog.show(("1: %2d, 2: %2d, 3: %2d, 4: %2d, 5: %2d, 6: %2d" %(self.p1.ft1.agents[0].m, self.p1.ft1.agents[0].apl, self.p1.ft1.agents[0].ga, self.p1.ft1.agents[0].df, self.p1.ft1.agents[0].sv, self.p1.ft1.agents[0].w)))
+        dialog.setWindowTitle("Second window")
+        dialog.setWindowModality(Qt.ApplicationModal)
+        dialog.resize(500, 500)
+        #dialog.closeEvent = self.CloseEvent
+        dialog.exec()
+        #dialog.show(("1: %2d, 2: %2d, 3: %2d, 4: %2d, 5: %2d, 6: %2d" %(self.p1.ft1.agents[0].m, self.p1.ft1.agents[0].apl, self.p1.ft1.agents[0].ga, self.p1.ft1.agents[0].df, self.p1.ft1.agents[0].sv, self.p1.ft1.agents[0].w)))
+    
+    """def CloseEvent(self, event):
+        for i in reversed(range(dialog.layout().count())): 
+            dialog.layout().itemAt(i).widget().setParent(None)
 
     def window_close(self):
-        self.dialog.close()
+        dialog.close()"""
 
 
     #def btn_stats(self):
