@@ -46,9 +46,9 @@ class firefightPhase:
         p1_agent_count = len(self.p1.ft1.agents)
         p2_agent_count = len(self.p2.ft1.agents)
 
-        for i in range(p1_agent_count+p2_agent_count):
+        """for i in range(p1_agent_count+p2_agent_count):
             if i % 2 == 0:
-                self.p1.select_action()
+                self.p1.select_action()"""
                 
 
     def select_action(self):

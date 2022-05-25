@@ -4,6 +4,7 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 import cv2 as cv
+from matplotlib.pyplot import table
 import numpy as np
 from math import *
 
@@ -100,26 +101,57 @@ class App(QWidget):
 
         self.setLayout(all_layout)
 
-    def window_open(self, i =0):
-
-        btnDialog = QPushButton("Close", self.dialog)
-        btnDialog.move(200,400)
-        btnDialog.clicked.connect(self.window_close)
-
-        container = QWidget(self.dialog)
-        container.setGeometry(QRect(0, 0, 500, 80))
-        about_text = QLabel(container)
-        about_text.setText("m: %2d, apl: %2d, ga: %2d, df: %2d, sv: %2d, w: %2d" %(self.p1.ft1.agents[i].m, self.p1.ft1.agents[i].apl, self.p1.ft1.agents[i].ga, self.p1.ft1.agents[i].df, self.p1.ft1.agents[i].sv, self.p1.ft1.agents[i].w))
-        self.dialog.show()
-
-        self.dialog.setWindowTitle("Second window")
-        self.dialog.setWindowModality(Qt.ApplicationModal)
-        self.dialog.resize(500, 500)
-        self.dialog.show()
+    def window_open(self, i):
+        dialog = QDialog()
+        #btnDialog = QPushButton("Close", dialog)
+        #btnDialog.move(200,400)
+        #btnDialog.clicked.connect(self.window_close)
         
 
+        # 테이블
+        data = {'m': self.p1.ft1.agents[i].m,'apl': self.p1.ft1.agents[i].apl,'ga': self.p1.ft1.agents[i].ga,'df': self.p1.ft1.agents[i].df
+        ,'df': self.p1.ft1.agents[i].df, 'sv': self.p1.ft1.agents[i].sv,'w': self.p1.ft1.agents[i].w}
+
+        tableWidget = QTableWidget()
+        tableWidget.setRowCount(1)
+        tableWidget.setColumnCount(6)
+
+        tableWidget.setVerticalHeaderLabels([self.p1.ft1.agents[i].type])
+        
+        horHeaders = []
+        for n, key in enumerate(data.keys()):
+            horHeaders.append(key)
+            for m, item in enumerate(str(data[key])):
+                newitem = QTableWidgetItem(item)
+                tableWidget.setItem(m, n, newitem)
+        tableWidget.setHorizontalHeaderLabels(horHeaders)
+        print(horHeaders)
+
+        tableWidget.setEditTriggers(QAbstractItemView.NoEditTriggers)
+        tableWidget.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
+
+        layout = QVBoxLayout()
+        dialog.setLayout(layout)
+        layout.addWidget(tableWidget)
+
+        """self.setWindowTitle('QTableWidget')
+        self.setWindowModality(Qt.ApplicationModal)
+        self.setGeometry(300, 100, 600, 400)
+        self.show()"""
+
+        dialog.setWindowTitle("Second window")
+        dialog.setWindowModality(Qt.ApplicationModal)
+        dialog.resize(500, 500)
+        #dialog.closeEvent = self.CloseEvent
+        dialog.exec()
+        #dialog.show(("1: %2d, 2: %2d, 3: %2d, 4: %2d, 5: %2d, 6: %2d" %(self.p1.ft1.agents[0].m, self.p1.ft1.agents[0].apl, self.p1.ft1.agents[0].ga, self.p1.ft1.agents[0].df, self.p1.ft1.agents[0].sv, self.p1.ft1.agents[0].w)))
+    
+    """def CloseEvent(self, event):
+        for i in reversed(range(dialog.layout().count())): 
+            dialog.layout().itemAt(i).widget().setParent(None)
+
     def window_close(self):
-        self.dialog.close()
+        dialog.close()"""
 
     def click_event(self, event):
         if self.count % 2 == 0:
