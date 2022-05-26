@@ -1,3 +1,4 @@
+from asyncio.windows_events import INFINITE
 import os 
 import sys
 from PyQt5.QtWidgets import *
@@ -81,22 +82,26 @@ class App(QWidget):
 
         self.location = []
 
+        self.color = [[255, 255, 0], [255, 0, 255]]
         self.img = cv.imread('field.png', cv.IMREAD_COLOR)
+        print(self.img.shape)
         for i in range(100, self.height(), int(self.height() / 5)):
             self.location.append([100, i])
-            cv.circle(self.img, (100, i), 5, (255, 255, 0), -1)
+            cv.circle(self.img, (100, i), 5, self.color[0], -1)
         for i in range(100, self.height(), int(self.height() / 5)):
             self.location.append([1050, i])
-            cv.circle(self.img, (1050, i), 5, (255, 0, 255), -1)
+            cv.circle(self.img, (1050, i), 5, self.color[1], -1)
         cv.imwrite('field.png', self.img)
 
-        photo_label = QLabel()
-        photo_label.setPixmap(QPixmap('field.png'))
-        photo_label.mousePressEvent = self.click_event
+        print(self.location)
+        self.photo_label = QLabel()
+        self.photo_label.setPixmap(QPixmap('field.png'))
+        self.photo_label.resize(self.img.shape[0], self.img.shape[1])
+        self.photo_label.mousePressEvent = self.click_event
 
         all_layout = QHBoxLayout()
         all_layout.addLayout(btn_layout_1)
-        all_layout.addWidget(photo_label)
+        all_layout.addWidget(self.photo_label)
         all_layout.addLayout(btn_layout_2)
 
         self.setLayout(all_layout)
@@ -156,18 +161,25 @@ class App(QWidget):
     def click_event(self, event):
         if self.count % 2 == 0:
             self.x1 = event.pos().x()
-            self.y1 = event.pos().y()
+            self.y1 = event.pos().y() - 62
 
             i = self.color_check(self.x1, self.y1)
-            if i == None:
-                count -= 1
+            self.unit_num = None
+            if i != None:
+                self.unit_num = i[0]
+                self.unit_color = i[1]
+                station = self.location[self.unit_num]
+                cv.circle(self.img, (station[0], station[1]), 3*INCH, (255, 255, 255))
+                cv.imwrite('field.png', self.img)
+                self.photo_label.setPixmap(QPixmap('field.png'))
+            if self.unit_num == None:
+                self.count -= 1
 
             print("Hello, x: %3d, y: %3d" %(self.x1, self.y1))
-            print(i)
 
         else:
             x2 = event.pos().x()
-            y2 = event.pos().y() 
+            y2 = event.pos().y() - 62
 
             print("Hello, x: %3d, y: %3d" %(x2, y2))
 
@@ -177,16 +189,20 @@ class App(QWidget):
 
     def color_check(self, x1, y1):
         result = 0
-        distance = 0
-        print(x1, y1)
-        print(self.img[x1][y1])
-        if self.img[x1][y1] == (0, 0, 0):
+        j = 0
+        distance = INFINITE
+        if (self.img[y1][x1] == [0, 0, 0]).all():
             return None
         else:
-            for i in len(self.location):
-                if dist((x1, y1), (self.location[i])) > distance:
+            for i in range(len(self.location)):
+                if (self.img[y1][x1] == self.color[0]).all():
+                    j = 0
+                else:
+                    j = 1
+                if dist((x1, y1), (self.location[i])) < distance:
+                    distance = dist((x1, y1), (self.location[i]))
                     result = i
-            return result
+            return [result, j]
 
     def target_range(self, x1, y1, x2, y2, range):
         '''dy = y2 - y1
@@ -200,9 +216,21 @@ class App(QWidget):
 
         angle = radians(angle)'''
         if dist((x1, y1), (x2, y2)) > range*INCH:
+            station = self.location[self.unit_num]
+            self.location[self.unit_num] = [x2, y2]
+            cv.circle(self.img, (station[0], station[1]), 3*INCH, (0, 0, 0))
+            cv.imwrite('field.png', self.img)
+            self.photo_label.setPixmap(QPixmap('field.png'))
             print("넘음")
         else:
-            print("통과")      
+            station = self.location[self.unit_num]
+            self.location[self.unit_num] = [x2, y2]
+            cv.circle(self.img, (station[0], station[1]), 5, (0, 0, 0), -1)
+            cv.circle(self.img, (station[0], station[1]), 3*INCH, (0, 0, 0))
+            cv.circle(self.img, (x2, y2), 5, self.color[self.unit_color], -1)
+            cv.imwrite('field.png', self.img)
+            self.photo_label.setPixmap(QPixmap('field.png'))
+            print("통과")
         
 
     def agent_select_test(self, x, y):
