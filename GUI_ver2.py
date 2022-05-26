@@ -18,6 +18,7 @@ class App(QWidget):
         self.initUI()
         self.p1 = p1
         self.p2 = p2
+        self.agent_selected = None
 
         self.count = 0
         self.x1 = 0
@@ -34,36 +35,36 @@ class App(QWidget):
          # 1
         btnUn1 = QPushButton("unit1", self)		
         btnUn1.resize(150,50)
-        btnUn1.clicked.connect(lambda :self.window_open(0))	
+        btnUn1.clicked.connect(lambda :self.window_open(self.p1.ft1.agents[0]))
 
         btnUn2 = QPushButton("unit2", self)	
         btnUn2.resize(150,50)
-        btnUn2.clicked.connect(lambda :self.window_open(1))
+        btnUn2.clicked.connect(lambda :self.window_open(self.p1.ft1.agents[1]))
 
         btnUn3 = QPushButton("unit3", self)	
         btnUn3.resize(150,50)
-        btnUn3.clicked.connect(lambda :self.window_open(2))
+        btnUn3.clicked.connect(lambda :self.window_open(self.p1.ft1.agents[2]))
 
         btnUn4 = QPushButton("unit4", self)	
         btnUn4.resize(150,50)
-        btnUn4.clicked.connect(lambda :self.window_open(3))
+        btnUn4.clicked.connect(lambda :self.window_open(self.p1.ft1.agents[3]))
 
         #2
         btnUn5 = QPushButton("unit5", self)	
         btnUn5.resize(150,50)
-        btnUn5.clicked.connect(lambda :self.window_open(4))
+        btnUn5.clicked.connect(lambda :self.window_open(self.p2.ft1.agents[0]))
 
         btnUn6 = QPushButton("unit6", self)		
         btnUn6.resize(150,50)
-        btnUn6.clicked.connect(lambda :self.window_open(5))
+        btnUn6.clicked.connect(lambda :self.window_open(self.p2.ft1.agents[1]))
         
         btnUn7 = QPushButton("unit7", self)	
         btnUn7.resize(150,50)
-        btnUn7.clicked.connect(lambda :self.window_open(6))	        
+        btnUn7.clicked.connect(lambda :self.window_open(self.p2.ft1.agents[2]))	        
         
         btnUn8 = QPushButton("unit8", self)		
         btnUn8.resize(150,50)
-        btnUn8.clicked.connect(lambda :self.window_open(7))
+        btnUn8.clicked.connect(lambda :self.window_open(self.p2.ft1.agents[3]))
 
         self.dialog = QDialog()
 
@@ -93,6 +94,7 @@ class App(QWidget):
         photo_label = QLabel()
         photo_label.setPixmap(QPixmap('field.png'))
         photo_label.mousePressEvent = self.click_event
+	
 
         all_layout = QHBoxLayout()
         all_layout.addLayout(btn_layout_1)
@@ -101,7 +103,7 @@ class App(QWidget):
 
         self.setLayout(all_layout)
 
-    def window_open(self, i):
+    def window_open(self, agent):
         dialog = QDialog()
         #btnDialog = QPushButton("Close", dialog)
         #btnDialog.move(200,400)
@@ -109,14 +111,14 @@ class App(QWidget):
         
 
         # 테이블
-        data = {'m': self.p1.ft1.agents[i].m,'apl': self.p1.ft1.agents[i].apl,'ga': self.p1.ft1.agents[i].ga,'df': self.p1.ft1.agents[i].df
-        ,'df': self.p1.ft1.agents[i].df, 'sv': self.p1.ft1.agents[i].sv,'w': self.p1.ft1.agents[i].w}
+        data = {'m': agent.m,'ap': agent.ap,'ga': agent.ga,'df': agent.df
+        ,'df': agent.df, 'sv': agent.sv,'w': agent.w}
 
         tableWidget = QTableWidget()
         tableWidget.setRowCount(1)
         tableWidget.setColumnCount(6)
 
-        tableWidget.setVerticalHeaderLabels([self.p1.ft1.agents[i].type])
+        tableWidget.setVerticalHeaderLabels([agent.type])
         
         horHeaders = []
         for n, key in enumerate(data.keys()):
@@ -125,14 +127,33 @@ class App(QWidget):
                 newitem = QTableWidgetItem(item)
                 tableWidget.setItem(m, n, newitem)
         tableWidget.setHorizontalHeaderLabels(horHeaders)
-        print(horHeaders)
 
         tableWidget.setEditTriggers(QAbstractItemView.NoEditTriggers)
         tableWidget.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
 
+        btn_move = QPushButton("move", self)		
+        btn_move.resize(150,50)
+        btn_move.clicked.connect(lambda :self.action(agent, 0))
+
+        btn_shoot = QPushButton("shoot", self)		
+        btn_shoot.resize(150,50)
+        btn_shoot.clicked.connect(lambda :self.action(agent, 1))	
+
+        btn_fight = QPushButton("fight", self)		
+        btn_fight.resize(150,50)
+        btn_fight.clicked.connect(lambda :self.action(agent, 2))	
+
+        btn_no_action = QPushButton("No Action", self)		
+        btn_no_action.resize(150,50)
+        btn_no_action.clicked.connect(lambda :self.action(agent, 3))	
+
         layout = QVBoxLayout()
         dialog.setLayout(layout)
         layout.addWidget(tableWidget)
+        layout.addWidget(btn_move)
+        layout.addWidget(btn_shoot)
+        layout.addWidget(btn_fight)
+        layout.addWidget(btn_no_action)
 
         """self.setWindowTitle('QTableWidget')
         self.setWindowModality(Qt.ApplicationModal)
@@ -144,7 +165,46 @@ class App(QWidget):
         dialog.resize(500, 500)
         #dialog.closeEvent = self.CloseEvent
         dialog.exec()
-        #dialog.show(("1: %2d, 2: %2d, 3: %2d, 4: %2d, 5: %2d, 6: %2d" %(self.p1.ft1.agents[0].m, self.p1.ft1.agents[0].apl, self.p1.ft1.agents[0].ga, self.p1.ft1.agents[0].df, self.p1.ft1.agents[0].sv, self.p1.ft1.agents[0].w)))
+
+    def action(self, agent, i):
+        if self.agent_selected == False:
+            self.agent_selected = True
+            
+        if i == 3:
+            agent.ap = agent.apl
+            self.agent_selected = False
+            if self.p1.turn == True:
+                self.p1.turn = False
+                self.p2.turn = True
+            else:
+                self.p1.turn = True
+                self.p2.turn = False
+        else:
+            if agent.ap == 1:
+                agent.ap = agent.apl
+                self.agent_selected = False
+                if self.p1.turn == True:
+                    self.p1.turn = False
+                    self.p2.turn = True
+                else:
+                    self.p1.turn = True
+                    self.p2.turn = False
+            else:
+                agent.ap -= 1
+                if i == 0:
+                    pos_x, pos_y = self.select_point()
+                    agent.move(pos_x, pos_y)
+                elif i == 1:
+                    pos_x, pos_y = self.select_point()
+                    target = self.select_agent()
+                    agent.shoot(target)
+                else:
+                    pos_x, pos_y = self.select_point()
+                    target = self.select_agent()
+                    agent.fight(target)
+
+            
+
     
     """def CloseEvent(self, event):
         for i in reversed(range(dialog.layout().count())): 
