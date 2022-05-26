@@ -48,14 +48,17 @@ class firefightPhase:
 
         """for i in range(p1_agent_count+p2_agent_count):
             if i % 2 == 0:
-                self.p1.select_action()"""
+                player = self.p1
+            else:
+                player = self.p2
+
+            player.set_turn()
+
+            
+            agent = player.select_agent()
+
+            while(agent.apl != 0):"""
+            
                 
 
-    def select_action(self):
-        print("액션: ")
-        action = input()
-        
-        if action == "move":
-            self.move()
-        elif action == "shoot":
-            self.shoot()
+
