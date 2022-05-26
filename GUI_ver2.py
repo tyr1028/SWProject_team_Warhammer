@@ -127,9 +127,8 @@ class App(QWidget):
         horHeaders = []
         for n, key in enumerate(data.keys()):
             horHeaders.append(key)
-            for m, item in enumerate(str(data[key])):
-                newitem = QTableWidgetItem(item)
-                tableWidget.setItem(m, n, newitem)
+            newitem = QTableWidgetItem(str(data[key]))
+            tableWidget.setItem(0, n, newitem)
         tableWidget.setHorizontalHeaderLabels(horHeaders)
 
         tableWidget.setEditTriggers(QAbstractItemView.NoEditTriggers)
