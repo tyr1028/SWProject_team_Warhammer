@@ -130,6 +130,28 @@ class App(QWidget):
         tableWidget.setEditTriggers(QAbstractItemView.NoEditTriggers)
         tableWidget.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
 
+        #버튼
+        btnMove = QPushButton("이동", dialog)		
+        btnMove.resize(150,50)
+
+        btnShoot = QPushButton("사격", dialog)		
+        btnShoot.resize(150,50)
+
+        btnBattle = QPushButton("전투", dialog)		
+        btnBattle.resize(150,50)
+
+        btnNon = QPushButton("수행하지않음", dialog)		
+        btnNon.resize(150,50)
+
+        btn_unit_layout = QHBoxLayout()
+  
+        btn_unit_layout.addLayout(btnMove)
+        btn_unit_layout.addLayout(btnShoot)
+        btn_unit_layout.addLayout(btnBattle)
+        btn_unit_layout.addLayout(btnNon)
+        dialog.setLayout(layout)
+
+
         layout = QVBoxLayout()
         dialog.setLayout(layout)
         layout.addWidget(tableWidget)
