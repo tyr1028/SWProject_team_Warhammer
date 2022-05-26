@@ -1,29 +1,10 @@
 from Dice import *
 import csv
 
-def select_agent(player):
-    agent_list = []
-
-    for agent in player.ft1.agents:
-        agent_list.append(agent)
-    for agent in player.ft2.agents:
-        agent_list.append(agent)
-
-    for i in range(len(agent_list)):
-        result = "%2d: "%i + agent_list[i].type
-        print(result, end = "  ")
-    print()
-
-    print("위 요원 중 선택: ", end="")
-    selected_agent = int(input())
-
-    print(agent_list[selected_agent].type + " 선택")
-    return agent_list[selected_agent]
-
-
 class Player:
     def __init__(self):
         self.cp = 0 # 플로이 사용에 시작되는 cp
+        self.turn = False
 
     def select_kt(self, kt):
         self.kt = Killteam(kt) 
@@ -79,6 +60,31 @@ class Player:
         file.close()
 
         return rows
+    
+    def set_turn(self):
+        self.turn = True
+
+    def set_turn_false(self):
+        self.turn = False
+
+    def select_agent(self):
+        agent_list = []
+
+        for agent in self.ft1.agents:
+            agent_list.append(agent)
+        for agent in self.ft2.agents:
+            agent_list.append(agent)
+
+        for i in range(len(agent_list)):
+            result = "%2d: "%i + agent_list[i].type
+            print(result, end = "  ")
+        print()
+
+        print("위 요원 중 선택: ", end="")
+        selected_agent = int(input())
+
+        print(agent_list[selected_agent].type + " 선택")
+        return agent_list[selected_agent]
 
 class Killteam:
     def __init__(self, kt):
