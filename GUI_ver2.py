@@ -20,6 +20,15 @@ class App(QWidget):
         self.p1 = p1
         self.p2 = p2
         self.agent_selected = None
+        
+        for j in range(0, 4, 1):
+            self.p1.ft1.agents[j].pos_x = 100
+            self.p1.ft1.agents[j].pos_y = 100 + j * int(self.height() / 5)
+            print(self.p1.ft1.agents[j].pos_x, self.p1.ft1.agents[j].pos_y)
+            self.location.append(self.p1.ft1.agents[j])
+            self.p2.ft1.agents[j].pos_x = 1050
+            self.p2.ft1.agents[j].pos_y = 100 + j * int(self.height() / 5)
+            self.location.append(self.p2.ft1.agents[j])
 
         self.count = 0
         self.x1 = 0
@@ -85,16 +94,13 @@ class App(QWidget):
 
         self.color = [[255, 255, 0], [255, 0, 255]]
         self.img = cv.imread('field.png', cv.IMREAD_COLOR)
-        print(self.img.shape)
-        for i in range(100, self.height(), int(self.height() / 5)):
-            self.location.append([100, i])
-            cv.circle(self.img, (100, i), 5, self.color[0], -1)
-        for i in range(100, self.height(), int(self.height() / 5)):
-            self.location.append([1050, i])
-            cv.circle(self.img, (1050, i), 5, self.color[1], -1)
+        for j in range(4):
+            for i in range(100, self.height(), int(self.height() / 5)):
+                cv.circle(self.img, (100, i), 5, self.color[0], -1)
+            for i in range(100, self.height(), int(self.height() / 5)):
+                cv.circle(self.img, (1050, i), 5, self.color[1], -1)
         cv.imwrite('field.png', self.img)
 
-        print(self.location)
         self.photo_label = QLabel()
         self.photo_label.setPixmap(QPixmap('field.png'))
         self.photo_label.resize(self.img.shape[0], self.img.shape[1])
@@ -226,10 +232,7 @@ class App(QWidget):
             if i != None:
                 self.unit_num = i[0]
                 self.unit_color = i[1]
-                station = self.location[self.unit_num]
-                cv.circle(self.img, (station[0], station[1]), 3*INCH, (255, 255, 255))
-                cv.imwrite('field.png', self.img)
-                self.photo_label.setPixmap(QPixmap('field.png'))
+                self.draw_circle(agent = self.location[self.unit_num])
             if self.unit_num == None:
                 self.count -= 1
 
@@ -245,6 +248,11 @@ class App(QWidget):
         
         self.count += 1
 
+    def draw_circle(self, dis = 3*INCH, agent=''):
+        cv.circle(self.img, (agent.pos_x, agent.pos_y), dis, (255, 255, 255))
+        cv.imwrite('field.png', self.img)
+        self.photo_label.setPixmap(QPixmap('field.png'))
+
     def color_check(self, x1, y1):
         result = 0
         j = 0
@@ -253,12 +261,14 @@ class App(QWidget):
             return None
         else:
             for i in range(len(self.location)):
+                print(self.location[i].pos_x, self.location[i].pos_y)
                 if (self.img[y1][x1] == self.color[0]).all():
                     j = 0
                 else:
                     j = 1
-                if dist((x1, y1), (self.location[i])) < distance:
-                    distance = dist((x1, y1), (self.location[i]))
+                if dist((x1, y1), (self.location[i].pos_x, self.location[i].pos_y)) < distance:
+                    distance = dist((x1, y1), (self.location[i].pos_x, self.location[i].pos_y))
+                    print(self.location[i].pos_x, self.location[i].pos_y)
                     result = i
             return [result, j]
 
@@ -275,14 +285,14 @@ class App(QWidget):
         angle = radians(angle)'''
         if dist((x1, y1), (x2, y2)) > range*INCH:
             station = self.location[self.unit_num]
-            self.location[self.unit_num] = [x2, y2]
             cv.circle(self.img, (station[0], station[1]), 3*INCH, (0, 0, 0))
             cv.imwrite('field.png', self.img)
             self.photo_label.setPixmap(QPixmap('field.png'))
             print("넘음")
         else:
-            station = self.location[self.unit_num]
-            self.location[self.unit_num] = [x2, y2]
+            station = [self.location[self.unit_num].pos_x, self.location[self.unit_num].pos_y]
+            self.location[self.unit_num].pos_x = x2
+            self.location[self.unit_num].pos_y = y2
             cv.circle(self.img, (station[0], station[1]), 5, (0, 0, 0), -1)
             cv.circle(self.img, (station[0], station[1]), 3*INCH, (0, 0, 0))
             cv.circle(self.img, (x2, y2), 5, self.color[self.unit_color], -1)
