@@ -8,10 +8,31 @@ import cv2 as cv
 from matplotlib.pyplot import table
 import numpy as np
 from math import *
+import time
 
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
 INCH = 35
+
+class MyWorker(QObject):
+
+    wait_for_input = pyqtSignal()
+    done = pyqtSignal()
+
+
+    @pyqtSlot()
+    def firstWork(self):
+        print('doing first work')
+        time.sleep(2)
+        print('first work done')
+        self.wait_for_input.emit()
+
+    @pyqtSlot()
+    def secondWork(self):
+        print('doing second work')
+        time.sleep(2)
+        print('second work done')
+        self.done.emit()
 
 class App(QWidget):
     def __init__(self, p1 = "", p2 = ""):
@@ -142,19 +163,19 @@ class App(QWidget):
 
         btn_move = QPushButton("move", self)		
         btn_move.resize(150,50)
-        btn_move.clicked.connect(lambda :self.action(agent, 0))
+        btn_move.clicked.connect(lambda :self.action(agent, 0, dialog))
 
         btn_shoot = QPushButton("shoot", self)		
         btn_shoot.resize(150,50)
-        btn_shoot.clicked.connect(lambda :self.action(agent, 1))	
+        btn_shoot.clicked.connect(lambda :self.action(agent, 1, dialog))	
 
         btn_fight = QPushButton("fight", self)		
         btn_fight.resize(150,50)
-        btn_fight.clicked.connect(lambda :self.action(agent, 2))	
+        btn_fight.clicked.connect(lambda :self.action(agent, 2, dialog))	
 
         btn_no_action = QPushButton("No Action", self)		
         btn_no_action.resize(150,50)
-        btn_no_action.clicked.connect(lambda :self.action(agent, 3))	
+        btn_no_action.clicked.connect(lambda :self.action(agent, 3, dialog))	
 
         layout = QVBoxLayout()
         dialog.setLayout(layout)
@@ -175,7 +196,7 @@ class App(QWidget):
         #dialog.closeEvent = self.CloseEvent
         dialog.exec()
 
-    def action(self, agent, i):
+    def action(self, agent, i, dialog):
         if self.agent_selected == False:
             self.agent_selected = True
             
@@ -200,17 +221,13 @@ class App(QWidget):
                     self.p2.turn = False
             else:
                 agent.ap -= 1
+                dialog.close()
                 if i == 0:
-                    pos_x, pos_y = self.select_point()
-                    agent.move(pos_x, pos_y)
+                    self.flag = "move"
                 elif i == 1:
-                    pos_x, pos_y = self.select_point()
-                    target = self.select_agent()
-                    agent.shoot(target)
+                    self.flag = "shoot"
                 else:
-                    pos_x, pos_y = self.select_point()
-                    target = self.select_agent()
-                    agent.fight(target)
+                    self.flag = "fight"
 
             
 
