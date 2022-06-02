@@ -37,9 +37,9 @@ class MyWorker(QObject):
 class App(QWidget):
     def __init__(self, p1 = "", p2 = ""):
         super().__init__()
-        self.initUI()
         self.p1 = p1
         self.p2 = p2
+        self.initUI()
         self.agent_selected = None
         
         for j in range(0, 4, 1):
@@ -64,48 +64,57 @@ class App(QWidget):
         self.resize(1500, 800)   
 
          # 1
+        self.txtLbl1 = QPushButton("현 차례", self)
+        self.txtLbl1.setEnabled(False)
+
         btnUn1 = QPushButton("unit1", self)		
         btnUn1.resize(150,50)
-        btnUn1.clicked.connect(lambda :self.window_open(self.p1.ft1.agents[0]))
+        btnUn1.clicked.connect(lambda :self.window_open(self.p1.ft1.agents[0], self.p1, btnUn1))
 
         btnUn2 = QPushButton("unit2", self)	
         btnUn2.resize(150,50)
-        btnUn2.clicked.connect(lambda :self.window_open(self.p1.ft1.agents[1]))
+        btnUn2.clicked.connect(lambda :self.window_open(self.p1.ft1.agents[1], self.p1, btnUn2))
 
         btnUn3 = QPushButton("unit3", self)	
         btnUn3.resize(150,50)
-        btnUn3.clicked.connect(lambda :self.window_open(self.p1.ft1.agents[2]))
+        btnUn3.clicked.connect(lambda :self.window_open(self.p1.ft1.agents[2], self.p1, btnUn3))
 
         btnUn4 = QPushButton("unit4", self)	
         btnUn4.resize(150,50)
-        btnUn4.clicked.connect(lambda :self.window_open(self.p1.ft1.agents[3]))
+        btnUn4.clicked.connect(lambda :self.window_open(self.p1.ft1.agents[3], self.p1, btnUn4))
 
         #2
+        self.txtLbl2 = QPushButton("", self)
+        self.txtLbl2.setEnabled(False)
+        
         btnUn5 = QPushButton("unit5", self)	
         btnUn5.resize(150,50)
-        btnUn5.clicked.connect(lambda :self.window_open(self.p2.ft1.agents[0]))
+        btnUn5.clicked.connect(lambda :self.window_open(self.p2.ft1.agents[0], self.p2, btnUn5))
 
         btnUn6 = QPushButton("unit6", self)		
         btnUn6.resize(150,50)
-        btnUn6.clicked.connect(lambda :self.window_open(self.p2.ft1.agents[1]))
+        btnUn6.clicked.connect(lambda :self.window_open(self.p2.ft1.agents[1], self.p2, btnUn6))
         
         btnUn7 = QPushButton("unit7", self)	
         btnUn7.resize(150,50)
-        btnUn7.clicked.connect(lambda :self.window_open(self.p2.ft1.agents[2]))	        
+        btnUn7.clicked.connect(lambda :self.window_open(self.p2.ft1.agents[2], self.p2, btnUn7))	        
         
         btnUn8 = QPushButton("unit8", self)		
         btnUn8.resize(150,50)
-        btnUn8.clicked.connect(lambda :self.window_open(self.p2.ft1.agents[3]))
+        btnUn8.clicked.connect(lambda :self.window_open(self.p2.ft1.agents[3], self.p2, btnUn8))
 
         self.dialog = QDialog()
 
         btn_layout_1 = QVBoxLayout()
+        btn_layout_1.addWidget(self.txtLbl1)
         btn_layout_1.addWidget(btnUn1)
         btn_layout_1.addWidget(btnUn2)
         btn_layout_1.addWidget(btnUn3)
         btn_layout_1.addWidget(btnUn4)
+        
 
         btn_layout_2 = QVBoxLayout()
+        btn_layout_2.addWidget(self.txtLbl2)
         btn_layout_2.addWidget(btnUn5)
         btn_layout_2.addWidget(btnUn6)
         btn_layout_2.addWidget(btnUn7)
@@ -134,7 +143,7 @@ class App(QWidget):
 
         self.setLayout(all_layout)
 
-    def window_open(self, agent):
+    def window_open(self, agent, player, button):
         dialog = QDialog()
         #btnDialog = QPushButton("Close", dialog)
         #btnDialog.move(200,400)
@@ -161,29 +170,47 @@ class App(QWidget):
         tableWidget.setEditTriggers(QAbstractItemView.NoEditTriggers)
         tableWidget.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
 
+
+
         btn_move = QPushButton("move", self)		
         btn_move.resize(150,50)
-        btn_move.clicked.connect(lambda :self.action(agent, 0, dialog))
+        btn_move.clicked.connect(lambda :self.action(agent, 0, dialog, button))
 
         btn_shoot = QPushButton("shoot", self)		
         btn_shoot.resize(150,50)
-        btn_shoot.clicked.connect(lambda :self.action(agent, 1, dialog))	
+        btn_shoot.clicked.connect(lambda :self.action(agent, 1, dialog, button))	
 
         btn_fight = QPushButton("fight", self)		
         btn_fight.resize(150,50)
-        btn_fight.clicked.connect(lambda :self.action(agent, 2, dialog))	
+        btn_fight.clicked.connect(lambda :self.action(agent, 2, dialog, button))	
 
         btn_no_action = QPushButton("No Action", self)		
         btn_no_action.resize(150,50)
-        btn_no_action.clicked.connect(lambda :self.action(agent, 3, dialog))	
+        btn_no_action.clicked.connect(lambda :self.action(agent, 3, dialog, button))	
+            
+        if self.agent_selected == agent:
+            text_lbl = QLabel("액션을 선택하세요")
+        elif player.turn == True and self.agent_selected == None:
+            text_lbl = QLabel("액션을 수행하면 타 요원으로 바꿀 수 없습니다")
+        else:
+            btn_move.setEnabled(False)
+            btn_shoot.setEnabled(False)
+            btn_fight.setEnabled(False)
+            btn_no_action.setEnabled(False)
+            if player.turn == False:
+                text_lbl = QLabel("현재 차례가 아닙니다")
+            elif self.agent_selected != agent:
+                text_lbl = QLabel("선택된 요원이 아닙니다")
 
         layout = QVBoxLayout()
         dialog.setLayout(layout)
         layout.addWidget(tableWidget)
+        layout.addWidget(text_lbl)
         layout.addWidget(btn_move)
         layout.addWidget(btn_shoot)
         layout.addWidget(btn_fight)
         layout.addWidget(btn_no_action)
+        
 
         """self.setWindowTitle('QTableWidget')
         self.setWindowModality(Qt.ApplicationModal)
@@ -196,38 +223,57 @@ class App(QWidget):
         #dialog.closeEvent = self.CloseEvent
         dialog.exec()
 
-    def action(self, agent, i, dialog):
-        if self.agent_selected == False:
-            self.agent_selected = True
+    def action(self, agent, i, dialog, button):
+        if not self.agent_selected:
+            self.agent_selected = agent
+            button.setStyleSheet("QPushButton{"
+                                    "color: rgb(58, 134, 255);"
+                                    "background-color: white;"
+                                    "border: 2px solid rgb(58, 134, 255);"
+                                "}")
+            
+        
+        dialog.close()
             
         if i == 3:
             agent.ap = agent.apl
-            self.agent_selected = False
+            self.agent_selected = None
+            button.setStyleSheet(QPushButton.styleSheet())
             if self.p1.turn == True:
                 self.p1.turn = False
                 self.p2.turn = True
+                self.txtLbl1.setText("")
+                self.txtLbl2.setText("현 차례")
             else:
                 self.p1.turn = True
                 self.p2.turn = False
-        else:
+                self.txtLbl2.setText("")
+                self.txtLbl1.setText("현 차례")
+        else:      
+            if i == 0:
+                self.flag = "move"
+            elif i == 1:
+                self.flag = "shoot"
+            else:
+                self.flag = "fight"
+
             if agent.ap == 1:
                 agent.ap = agent.apl
-                self.agent_selected = False
+                self.agent_selected = None
+                button.setStyleSheet("")
                 if self.p1.turn == True:
                     self.p1.turn = False
                     self.p2.turn = True
+                    self.txtLbl1.setText("")
+                    self.txtLbl2.setText("현 차례")
                 else:
                     self.p1.turn = True
                     self.p2.turn = False
+                    self.txtLbl2.setText("")
+                    self.txtLbl1.setText("현 차례") 
             else:
                 agent.ap -= 1
-                dialog.close()
-                if i == 0:
-                    self.flag = "move"
-                elif i == 1:
-                    self.flag = "shoot"
-                else:
-                    self.flag = "fight"
+                
 
             
 
@@ -338,3 +384,4 @@ if __name__ == '__main__':
     img = cv.imread('field.png', cv.IMREAD_COLOR)
     img = np.zeros((img.shape))
     cv.imwrite('field.png', img)
+
