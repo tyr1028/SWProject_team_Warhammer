@@ -122,6 +122,7 @@ class Agent:
         self.pos_x = 0
         self.pos_y = 0
         self.isAlive = True # 요원의 생존 여부
+        self.action_available = True
         self.weapons = [] # 요원이 장비하고 있는 무기 리스트 
 
     def __str__(self):

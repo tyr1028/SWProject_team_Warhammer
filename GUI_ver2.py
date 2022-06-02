@@ -68,19 +68,19 @@ class App(QWidget):
         self.txtLbl1 = QPushButton("현 차례", self)
         self.txtLbl1.setEnabled(False)
 
-        btnUn1 = QPushButton("unit1", self)		
+        btnUn1 = QPushButton(self.p1.ft1.agents[0].type, self)		
         btnUn1.resize(150,50)
         btnUn1.clicked.connect(lambda :self.window_open(self.p1.ft1.agents[0], self.p1, btnUn1))
 
-        btnUn2 = QPushButton("unit2", self)	
+        btnUn2 = QPushButton(self.p1.ft1.agents[1].type, self)	
         btnUn2.resize(150,50)
         btnUn2.clicked.connect(lambda :self.window_open(self.p1.ft1.agents[1], self.p1, btnUn2))
 
-        btnUn3 = QPushButton("unit3", self)	
+        btnUn3 = QPushButton(self.p1.ft1.agents[2].type, self)	
         btnUn3.resize(150,50)
         btnUn3.clicked.connect(lambda :self.window_open(self.p1.ft1.agents[2], self.p1, btnUn3))
 
-        btnUn4 = QPushButton("unit4", self)	
+        btnUn4 = QPushButton(self.p1.ft1.agents[3].type, self)	
         btnUn4.resize(150,50)
         btnUn4.clicked.connect(lambda :self.window_open(self.p1.ft1.agents[3], self.p1, btnUn4))
 
@@ -88,19 +88,19 @@ class App(QWidget):
         self.txtLbl2 = QPushButton("", self)
         self.txtLbl2.setEnabled(False)
         
-        btnUn5 = QPushButton("unit5", self)	
+        btnUn5 = QPushButton(self.p2.ft1.agents[0].type, self)	
         btnUn5.resize(150,50)
         btnUn5.clicked.connect(lambda :self.window_open(self.p2.ft1.agents[0], self.p2, btnUn5))
 
-        btnUn6 = QPushButton("unit6", self)		
+        btnUn6 = QPushButton(self.p2.ft1.agents[1].type, self)		
         btnUn6.resize(150,50)
         btnUn6.clicked.connect(lambda :self.window_open(self.p2.ft1.agents[1], self.p2, btnUn6))
         
-        btnUn7 = QPushButton("unit7", self)	
+        btnUn7 = QPushButton(self.p2.ft1.agents[2].type, self)	
         btnUn7.resize(150,50)
         btnUn7.clicked.connect(lambda :self.window_open(self.p2.ft1.agents[2], self.p2, btnUn7))	        
         
-        btnUn8 = QPushButton("unit8", self)		
+        btnUn8 = QPushButton(self.p2.ft1.agents[3].type, self)		
         btnUn8.resize(150,50)
         btnUn8.clicked.connect(lambda :self.window_open(self.p2.ft1.agents[3], self.p2, btnUn8))
 
@@ -171,24 +171,30 @@ class App(QWidget):
         tableWidget.setEditTriggers(QAbstractItemView.NoEditTriggers)
         tableWidget.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
 
-        btn_move = QPushButton("move", self)		
+        btn_move = QPushButton("일반 이동(1AP 소모)", self)		
         btn_move.resize(150,50)
         btn_move.clicked.connect(lambda :self.action(agent, 0, dialog, button))
 
-        btn_shoot = QPushButton("shoot", self)		
+        btn_shoot = QPushButton("사격(1AP 소모)", self)		
         btn_shoot.resize(150,50)
         btn_shoot.clicked.connect(lambda :self.action(agent, 1, dialog, button))	
 
-        btn_fight = QPushButton("fight", self)		
+        btn_fight = QPushButton("전투(1AP 소모)", self)		
         btn_fight.resize(150,50)
         btn_fight.clicked.connect(lambda :self.action(agent, 2, dialog, button))	
 
-        btn_no_action = QPushButton("No Action", self)		
+        btn_no_action = QPushButton("수행 안함(순서 넘어감)", self)		
         btn_no_action.resize(150,50)
         btn_no_action.clicked.connect(lambda :self.action(agent, 3, dialog, button))	
             
         if self.agent_selected == agent:
             text_lbl = QLabel("액션을 선택하세요")
+        elif agent.action_available == False:
+            text_lbl = QLabel("액션을 이미 수행하였습니다.")
+            btn_move.setEnabled(False)
+            btn_shoot.setEnabled(False)
+            btn_fight.setEnabled(False)
+            btn_no_action.setEnabled(False)
         elif player.turn == True and self.agent_selected == None:
             text_lbl = QLabel("액션을 수행하면 타 요원으로 바꿀 수 없습니다")
         else:
@@ -237,7 +243,8 @@ class App(QWidget):
         if i == 3:
             agent.ap = agent.apl
             self.agent_selected = None
-            button.setStyleSheet(QPushButton.styleSheet())
+            agent.action_available = False
+            button.setStyleSheet("")
             if self.p1.turn == True:
                 self.p1.turn = False
                 self.p2.turn = True
@@ -259,6 +266,7 @@ class App(QWidget):
             if agent.ap == 1:
                 agent.ap = agent.apl
                 self.agent_selected = None
+                agent.action_available = False
                 button.setStyleSheet("")
                 if self.p1.turn == True:
                     self.p1.turn = False
