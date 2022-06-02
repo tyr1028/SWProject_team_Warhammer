@@ -1,4 +1,5 @@
 from asyncio.windows_events import INFINITE
+from multiprocessing.connection import wait
 import os 
 import sys
 from PyQt5.QtWidgets import *
@@ -134,7 +135,7 @@ class App(QWidget):
         self.photo_label = QLabel()
         self.photo_label.setPixmap(QPixmap('field.png'))
         self.photo_label.resize(self.img.shape[0], self.img.shape[1])
-        self.photo_label.mousePressEvent = self.click_event
+        # self.photo_label.mousePressEvent = self.click_event
 
         all_layout = QHBoxLayout()
         all_layout.addLayout(btn_layout_1)
@@ -170,6 +171,7 @@ class App(QWidget):
         tableWidget.setEditTriggers(QAbstractItemView.NoEditTriggers)
         tableWidget.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
 
+<<<<<<< Updated upstream
 
 
         btn_move = QPushButton("move", self)		
@@ -201,16 +203,40 @@ class App(QWidget):
                 text_lbl = QLabel("현재 차례가 아닙니다")
             elif self.agent_selected != agent:
                 text_lbl = QLabel("선택된 요원이 아닙니다")
+=======
+        self.btn_move = QPushButton("move", self)		
+        self.btn_move.resize(150,50)
+        self.btn_move.clicked.connect(lambda :self.action(agent, 0, dialog))
+
+        self.btn_shoot = QPushButton("shoot", self)		
+        self.btn_shoot.resize(150,50)
+        self.btn_shoot.clicked.connect(lambda :self.action(agent, 1, dialog))	
+
+        self.btn_fight = QPushButton("fight", self)		
+        self.btn_fight.resize(150,50)
+        self.btn_fight.clicked.connect(lambda :self.action(agent, 2, dialog))	
+
+        self.btn_no_action = QPushButton("No Action", self)		
+        self.btn_no_action.resize(150,50)
+        self.btn_no_action.clicked.connect(lambda :self.action(agent, 3, dialog))	
+>>>>>>> Stashed changes
 
         layout = QVBoxLayout()
         dialog.setLayout(layout)
         layout.addWidget(tableWidget)
+<<<<<<< Updated upstream
         layout.addWidget(text_lbl)
         layout.addWidget(btn_move)
         layout.addWidget(btn_shoot)
         layout.addWidget(btn_fight)
         layout.addWidget(btn_no_action)
         
+=======
+        layout.addWidget(self.btn_move)
+        layout.addWidget(self.btn_shoot)
+        layout.addWidget(self.btn_fight)
+        layout.addWidget(self.btn_no_action)
+>>>>>>> Stashed changes
 
         """self.setWindowTitle('QTableWidget')
         self.setWindowModality(Qt.ApplicationModal)
@@ -273,7 +299,18 @@ class App(QWidget):
                     self.txtLbl1.setText("현 차례") 
             else:
                 agent.ap -= 1
+<<<<<<< Updated upstream
                 
+=======
+                dialog.close()
+                if i == 0:
+                    self.flag = "move"
+                    self.target_range_test(agent.m, agent=agent)
+                elif i == 1:
+                    self.flag = "shoot"
+                else:
+                    self.flag = "fight"
+>>>>>>> Stashed changes
 
             
 
@@ -284,6 +321,12 @@ class App(QWidget):
 
     def window_close(self):
         dialog.close()"""
+
+    def click_event_test(self, event):
+        self.x1 = event.pos().x()
+        self.y1 = event.pos().y() - 62
+
+        # print("Hello, x: %3d, y: %3d" %(self.x1, self.y1))
 
     def click_event(self, event):
         if self.count % 2 == 0:
@@ -312,7 +355,7 @@ class App(QWidget):
         self.count += 1
 
     def draw_circle(self, dis = 3*INCH, agent=''):
-        cv.circle(self.img, (agent.pos_x, agent.pos_y), dis, (255, 255, 255))
+        cv.circle(self.img, (agent.pos_x, agent.pos_y), dis * INCH, (255, 255, 255))
         cv.imwrite('field.png', self.img)
         self.photo_label.setPixmap(QPixmap('field.png'))
 
@@ -334,6 +377,24 @@ class App(QWidget):
                     print(self.location[i].pos_x, self.location[i].pos_y)
                     result = i
             return [result, j]
+
+    def target_range_test(self, range = 3, agent = ''):
+        self.draw_circle(agent.m, agent)
+        self.photo_label.mousePressEvent = self.click_event_test
+        print(self.x1, self.y1)
+        if dist((agent.pos_x, agent.pos_y), (self.x1, self.y1)) > range*INCH:
+            cv.circle(self.img, (agent.pos_x, agent.pos_y), range*INCH, (0, 0, 0))
+            cv.imwrite('field.png', self.img)
+            self.photo_label.setPixmap(QPixmap('field.png'))
+        else:
+            station = [agent.pos_x, agent.pos_y]
+            agent.pos_x = self.x1
+            agent.pos_y = self.y1
+            cv.circle(self.img, (station[0], station[1]), 5, (0, 0, 0), -1)
+            cv.circle(self.img, (station[0], station[1]), range*INCH, (0, 0, 0))
+            cv.circle(self.img, (self.x1, self.y1), 5, (255, 255, 0), -1)
+            cv.imwrite('field.png', self.img)
+            self.photo_label.setPixmap(QPixmap('field.png'))
 
     def target_range(self, x1, y1, x2, y2, range):
         '''dy = y2 - y1
