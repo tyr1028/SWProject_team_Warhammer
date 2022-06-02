@@ -171,9 +171,6 @@ class App(QWidget):
         tableWidget.setEditTriggers(QAbstractItemView.NoEditTriggers)
         tableWidget.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
 
-<<<<<<< Updated upstream
-
-
         btn_move = QPushButton("move", self)		
         btn_move.resize(150,50)
         btn_move.clicked.connect(lambda :self.action(agent, 0, dialog, button))
@@ -203,40 +200,16 @@ class App(QWidget):
                 text_lbl = QLabel("현재 차례가 아닙니다")
             elif self.agent_selected != agent:
                 text_lbl = QLabel("선택된 요원이 아닙니다")
-=======
-        self.btn_move = QPushButton("move", self)		
-        self.btn_move.resize(150,50)
-        self.btn_move.clicked.connect(lambda :self.action(agent, 0, dialog))
-
-        self.btn_shoot = QPushButton("shoot", self)		
-        self.btn_shoot.resize(150,50)
-        self.btn_shoot.clicked.connect(lambda :self.action(agent, 1, dialog))	
-
-        self.btn_fight = QPushButton("fight", self)		
-        self.btn_fight.resize(150,50)
-        self.btn_fight.clicked.connect(lambda :self.action(agent, 2, dialog))	
-
-        self.btn_no_action = QPushButton("No Action", self)		
-        self.btn_no_action.resize(150,50)
-        self.btn_no_action.clicked.connect(lambda :self.action(agent, 3, dialog))	
->>>>>>> Stashed changes
 
         layout = QVBoxLayout()
         dialog.setLayout(layout)
         layout.addWidget(tableWidget)
-<<<<<<< Updated upstream
         layout.addWidget(text_lbl)
         layout.addWidget(btn_move)
         layout.addWidget(btn_shoot)
         layout.addWidget(btn_fight)
         layout.addWidget(btn_no_action)
         
-=======
-        layout.addWidget(self.btn_move)
-        layout.addWidget(self.btn_shoot)
-        layout.addWidget(self.btn_fight)
-        layout.addWidget(self.btn_no_action)
->>>>>>> Stashed changes
 
         """self.setWindowTitle('QTableWidget')
         self.setWindowModality(Qt.ApplicationModal)
@@ -299,19 +272,6 @@ class App(QWidget):
                     self.txtLbl1.setText("현 차례") 
             else:
                 agent.ap -= 1
-<<<<<<< Updated upstream
-                
-=======
-                dialog.close()
-                if i == 0:
-                    self.flag = "move"
-                    self.target_range_test(agent.m, agent=agent)
-                elif i == 1:
-                    self.flag = "shoot"
-                else:
-                    self.flag = "fight"
->>>>>>> Stashed changes
-
             
 
     
