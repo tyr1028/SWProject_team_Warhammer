@@ -42,15 +42,14 @@ class App(QWidget):
         self.p2 = p2
         self.initUI()
         self.agent_selected = None
+        self.agent_color = self.color[0]
         
         for j in range(0, 4, 1):
             self.p1.ft1.agents[j].pos_x = 100
             self.p1.ft1.agents[j].pos_y = 100 + j * int(self.height() / 5)
             print(self.p1.ft1.agents[j].pos_x, self.p1.ft1.agents[j].pos_y)
-            self.location.append(self.p1.ft1.agents[j])
             self.p2.ft1.agents[j].pos_x = 1050
             self.p2.ft1.agents[j].pos_y = 100 + j * int(self.height() / 5)
-            self.location.append(self.p2.ft1.agents[j])
 
         self.count = 0
         self.x1 = 0
@@ -121,15 +120,13 @@ class App(QWidget):
         btn_layout_2.addWidget(btnUn7)
         btn_layout_2.addWidget(btnUn8)
 
-        self.location = []
-
         self.color = [[255, 255, 0], [255, 0, 255]]
         self.img = cv.imread('field.png', cv.IMREAD_COLOR)
         for j in range(4):
             for i in range(100, self.height(), int(self.height() / 5)):
-                cv.circle(self.img, (100, i), 5, self.color[0], -1)
+                cv.circle(self.img, (100, i), 8, self.color[0], -1)
             for i in range(100, self.height(), int(self.height() / 5)):
-                cv.circle(self.img, (1050, i), 5, self.color[1], -1)
+                cv.circle(self.img, (1050, i), 8, self.color[1], -1)
         cv.imwrite('field.png', self.img)
 
         self.photo_label = QLabel()
@@ -247,11 +244,13 @@ class App(QWidget):
             agent.action_available = False
             button.setStyleSheet("")
             if self.p1.turn == True:
+                self.agent_color = self.color[1]
                 self.p1.turn = False
                 self.p2.turn = True
                 self.txtLbl1.setText("")
                 self.txtLbl2.setText("현 차례")
             else:
+                self.agent_color = self.color[0]
                 self.p1.turn = True
                 self.p2.turn = False
                 self.txtLbl2.setText("")
@@ -324,6 +323,43 @@ class App(QWidget):
             agent.pos_y = self.y1
             
             self.flag = None
+        
+        elif self.flag == "shoot":
+            agent = self.agent_selected
+            self.x1 = event.pos().x()
+            self.y1 = event.pos().y() - 62
+
+            print((self.img[self.y1][self.x1] != self.agent_color).any() and ((self.img[self.y1][self.x1] == self.color[0]).all() or (self.img[self.y1][self.x1] == self.color[1]).all()))
+            if (self.img[self.y1][self.x1] != self.agent_color).any() and ((self.img[self.y1][self.x1] == self.color[0]).all() or (self.img[self.y1][self.x1] == self.color[1]).all()):
+                print('shoot')
+                distance = INFINITE
+                enemy = ''
+                for i in self.p2.ft1.agents:
+                    print(distance)
+                    if distance > dist((i.pos_x, i.pos_y), (self.x1, self.y1)):
+                        enemy = i
+                        distance = dist((i.pos_x, i.pos_y), (self.x1, self.y1))
+                agent.shoot(enemy)
+                print('shoot')
+
+                if agent.ap == 0:
+                    self.agent_selected = None
+
+            self.flag = None
+
+        elif self.flag == "fight":
+            agent = self.agent_selected
+            self.x1 = event.pos().x()
+            self.y1 = event.pos().y() - 62
+
+            if (self.img[self.y1][self.x1] != self.agent_color).all() and (self.img[self.y1][self.x1] in self.color).all():
+
+                agent.fight()
+
+                if agent.ap == 0:
+                    self.agent_selected = None
+
+            self.flag = None
 
     def draw_circle(self, dis = 3*INCH, agent=''):
         cv.circle(self.img, (agent.pos_x, agent.pos_y), dis * INCH, (255, 255, 255))
@@ -350,21 +386,18 @@ class App(QWidget):
             return [result, j]
 
     def target_range_test(self, range = 3, agent = ''):
-        self.draw_circle(agent.m, agent)
-        print(self.x1, self.y1)
         if dist((agent.pos_x, agent.pos_y), (self.x1, self.y1)) > range*INCH:
-            cv.circle(self.img, (agent.pos_x, agent.pos_y), range*INCH, (0, 0, 0))
+            cv.circle(self.img, (agent.pos_x, agent.pos_y), agent.m*INCH, (0, 0, 0))
             cv.imwrite('field.png', self.img)
             self.photo_label.setPixmap(QPixmap('field.png'))
         else:
-            station = [agent.pos_x, agent.pos_y]
-            agent.pos_x = self.x1
-            agent.pos_y = self.y1
-            cv.circle(self.img, (station[0], station[1]), 5, (0, 0, 0), -1)
-            cv.circle(self.img, (station[0], station[1]), range*INCH, (0, 0, 0))
-            cv.circle(self.img, (self.x1, self.y1), 5, (255, 255, 0), -1)
+            cv.circle(self.img, (agent.pos_x, agent.pos_y), 8, (0, 0, 0), -1)
+            cv.circle(self.img, (agent.pos_x, agent.pos_y), agent.m*INCH, (0, 0, 0))
+            cv.circle(self.img, (self.x1, self.y1), 8, (255, 255, 0), -1)
             cv.imwrite('field.png', self.img)
             self.photo_label.setPixmap(QPixmap('field.png'))
+            agent.pos_x = self.x1
+            agent.pos_y = self.y1
 
     def target_range(self, x1, y1, x2, y2, range):
         '''dy = y2 - y1
