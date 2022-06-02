@@ -118,6 +118,7 @@ class Fireteam:
 
 class Agent:
     def __init__(self, type):
+        self.color = []
         self.type = type
         self.pos_x = 0
         self.pos_y = 0
