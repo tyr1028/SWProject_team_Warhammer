@@ -1,4 +1,5 @@
 from asyncio.windows_events import INFINITE
+from multiprocessing.connection import wait
 import os 
 import sys
 from PyQt5.QtWidgets import *
@@ -134,7 +135,7 @@ class App(QWidget):
         self.photo_label = QLabel()
         self.photo_label.setPixmap(QPixmap('field.png'))
         self.photo_label.resize(self.img.shape[0], self.img.shape[1])
-        self.photo_label.mousePressEvent = self.click_event
+        # self.photo_label.mousePressEvent = self.click_event
 
         all_layout = QHBoxLayout()
         all_layout.addLayout(btn_layout_1)
@@ -169,8 +170,6 @@ class App(QWidget):
 
         tableWidget.setEditTriggers(QAbstractItemView.NoEditTriggers)
         tableWidget.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
-
-
 
         btn_move = QPushButton("move", self)		
         btn_move.resize(150,50)
@@ -273,8 +272,6 @@ class App(QWidget):
                     self.txtLbl1.setText("현 차례") 
             else:
                 agent.ap -= 1
-                
-
             
 
     
@@ -284,6 +281,12 @@ class App(QWidget):
 
     def window_close(self):
         dialog.close()"""
+
+    def click_event_test(self, event):
+        self.x1 = event.pos().x()
+        self.y1 = event.pos().y() - 62
+
+        # print("Hello, x: %3d, y: %3d" %(self.x1, self.y1))
 
     def click_event(self, event):
         if self.count % 2 == 0:
@@ -312,7 +315,7 @@ class App(QWidget):
         self.count += 1
 
     def draw_circle(self, dis = 3*INCH, agent=''):
-        cv.circle(self.img, (agent.pos_x, agent.pos_y), dis, (255, 255, 255))
+        cv.circle(self.img, (agent.pos_x, agent.pos_y), dis * INCH, (255, 255, 255))
         cv.imwrite('field.png', self.img)
         self.photo_label.setPixmap(QPixmap('field.png'))
 
@@ -334,6 +337,24 @@ class App(QWidget):
                     print(self.location[i].pos_x, self.location[i].pos_y)
                     result = i
             return [result, j]
+
+    def target_range_test(self, range = 3, agent = ''):
+        self.draw_circle(agent.m, agent)
+        self.photo_label.mousePressEvent = self.click_event_test
+        print(self.x1, self.y1)
+        if dist((agent.pos_x, agent.pos_y), (self.x1, self.y1)) > range*INCH:
+            cv.circle(self.img, (agent.pos_x, agent.pos_y), range*INCH, (0, 0, 0))
+            cv.imwrite('field.png', self.img)
+            self.photo_label.setPixmap(QPixmap('field.png'))
+        else:
+            station = [agent.pos_x, agent.pos_y]
+            agent.pos_x = self.x1
+            agent.pos_y = self.y1
+            cv.circle(self.img, (station[0], station[1]), 5, (0, 0, 0), -1)
+            cv.circle(self.img, (station[0], station[1]), range*INCH, (0, 0, 0))
+            cv.circle(self.img, (self.x1, self.y1), 5, (255, 255, 0), -1)
+            cv.imwrite('field.png', self.img)
+            self.photo_label.setPixmap(QPixmap('field.png'))
 
     def target_range(self, x1, y1, x2, y2, range):
         '''dy = y2 - y1
