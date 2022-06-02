@@ -306,17 +306,6 @@ class App(QWidget):
                 self.unit_num = i[0]
                 self.unit_color = i[1]"""
         else:
-            if self.p1.turn == True:
-                self.p1.turn = False
-                self.p2.turn = True
-                self.txtLbl1.setText("")
-                self.txtLbl2.setText("현 차례")
-            else:
-                self.p1.turn = True
-                self.p2.turn = False
-                self.txtLbl2.setText("")
-                self.txtLbl1.setText("현 차례") 
-
             if self.flag == "move":
                 agent = self.agent_selected
                 self.x1 = event.pos().x()
@@ -371,6 +360,18 @@ class App(QWidget):
                         self.agent_selected = None
 
                 self.flag = None
+
+            if agent.ap == 0:
+                if self.p1.turn == True:
+                    self.p1.turn = False
+                    self.p2.turn = True
+                    self.txtLbl1.setText("")
+                    self.txtLbl2.setText("현 차례")
+                else:
+                    self.p1.turn = True
+                    self.p2.turn = False
+                    self.txtLbl2.setText("")
+                    self.txtLbl1.setText("현 차례") 
 
     def draw_circle(self, dis = 3*INCH, agent=''):
         cv.circle(self.img, (agent.pos_x, agent.pos_y), dis * INCH, (255, 255, 255))
