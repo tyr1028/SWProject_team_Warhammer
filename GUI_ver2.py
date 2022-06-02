@@ -185,7 +185,14 @@ class App(QWidget):
         btn_no_action.clicked.connect(lambda :self.action(agent, 3, dialog, button))	
             
         if self.agent_selected == agent:
-            text_lbl = QLabel("액션을 선택하세요")
+            if self.flag != None:
+                text_lbl = QLabel("사용중인 액션이 있습니다.")
+                btn_move.setEnabled(False)
+                btn_shoot.setEnabled(False)
+                btn_fight.setEnabled(False)
+                btn_no_action.setEnabled(False)
+            else:
+                text_lbl = QLabel("액션을 선택하세요")
         elif agent.action_available == False:
             text_lbl = QLabel("액션을 이미 수행하였습니다.")
             btn_move.setEnabled(False)
