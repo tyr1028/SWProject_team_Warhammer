@@ -42,14 +42,15 @@ class App(QWidget):
         self.p2 = p2
         self.initUI()
         self.agent_selected = None
-        self.agent_color = self.color[0]
         
         for j in range(0, 4, 1):
             self.p1.ft1.agents[j].pos_x = 100
             self.p1.ft1.agents[j].pos_y = 100 + j * int(self.height() / 5)
+            self.p1.ft1.agents[j].color = self.color[0]
             print(self.p1.ft1.agents[j].pos_x, self.p1.ft1.agents[j].pos_y)
             self.p2.ft1.agents[j].pos_x = 1050
             self.p2.ft1.agents[j].pos_y = 100 + j * int(self.height() / 5)
+            self.p2.ft1.agents[j].color = self.color[1]
 
         self.count = 0
         self.x1 = 0
@@ -244,13 +245,11 @@ class App(QWidget):
             agent.action_available = False
             button.setStyleSheet("")
             if self.p1.turn == True:
-                self.agent_color = self.color[1]
                 self.p1.turn = False
                 self.p2.turn = True
                 self.txtLbl1.setText("")
                 self.txtLbl2.setText("현 차례")
             else:
-                self.agent_color = self.color[0]
                 self.p1.turn = True
                 self.p2.turn = False
                 self.txtLbl2.setText("")
@@ -329,18 +328,21 @@ class App(QWidget):
             self.x1 = event.pos().x()
             self.y1 = event.pos().y() - 62
 
-            print((self.img[self.y1][self.x1] != self.agent_color).any() and ((self.img[self.y1][self.x1] == self.color[0]).all() or (self.img[self.y1][self.x1] == self.color[1]).all()))
-            if (self.img[self.y1][self.x1] != self.agent_color).any() and ((self.img[self.y1][self.x1] == self.color[0]).all() or (self.img[self.y1][self.x1] == self.color[1]).all()):
-                print('shoot')
+            if (self.img[self.y1][self.x1] != agent.color).any() and ((self.img[self.y1][self.x1] == self.color[0]).all() or (self.img[self.y1][self.x1] == self.color[1]).all()):
                 distance = INFINITE
                 enemy = ''
-                for i in self.p2.ft1.agents:
-                    print(distance)
-                    if distance > dist((i.pos_x, i.pos_y), (self.x1, self.y1)):
-                        enemy = i
-                        distance = dist((i.pos_x, i.pos_y), (self.x1, self.y1))
-                agent.shoot(enemy)
+                if self.p1.turn:
+                    for i in self.p2.ft1.agents:
+                        if distance > dist((i.pos_x, i.pos_y), (self.x1, self.y1)):
+                            enemy = i
+                            distance = dist((i.pos_x, i.pos_y), (self.x1, self.y1))
+                if self.p2.turn:
+                    for i in self.p1.ft1.agents:
+                        if distance > dist((i.pos_x, i.pos_y), (self.x1, self.y1)):
+                            enemy = i
+                            distance = dist((i.pos_x, i.pos_y), (self.x1, self.y1))
                 print('shoot')
+                agent.shoot(enemy)
 
                 if agent.ap == 0:
                     self.agent_selected = None
@@ -352,7 +354,7 @@ class App(QWidget):
             self.x1 = event.pos().x()
             self.y1 = event.pos().y() - 62
 
-            if (self.img[self.y1][self.x1] != self.agent_color).all() and (self.img[self.y1][self.x1] in self.color).all():
+            if (self.img[self.y1][self.x1] != agent.color).all() and (self.img[self.y1][self.x1] in self.color).all():
 
                 agent.fight()
 
@@ -393,7 +395,7 @@ class App(QWidget):
         else:
             cv.circle(self.img, (agent.pos_x, agent.pos_y), 8, (0, 0, 0), -1)
             cv.circle(self.img, (agent.pos_x, agent.pos_y), agent.m*INCH, (0, 0, 0))
-            cv.circle(self.img, (self.x1, self.y1), 8, (255, 255, 0), -1)
+            cv.circle(self.img, (self.x1, self.y1), 8, agent.color, -1)
             cv.imwrite('field.png', self.img)
             self.photo_label.setPixmap(QPixmap('field.png'))
             agent.pos_x = self.x1
