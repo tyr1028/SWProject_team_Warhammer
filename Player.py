@@ -174,7 +174,7 @@ class Agent:
         self.pos_y = pos_y
 
     def shoot(self, opponent): # 사격 (소모 ap 아직 구현 안 함)
-        target = select_agent(opponent) # 상대 player로부터 공격 대상 선택
+        target = self.select_agent(opponent) # 상대 player로부터 공격 대상 선택
         weapon = self.select_weapon("Ranged") # Ranged 타입 무기 선택
 
         dice_result = dice(weapon.a) # 선택한 무기의 a스탯만큼 주사위 굴림
@@ -239,7 +239,7 @@ class Agent:
                 print("%2d만큼의 데미지를 받아 체력이 %2d 만큼 남았습니다" %(total_damage, target.w))
 
     def fight(self, opponent):
-        target = select_agent(opponent) # 상대 player로부터 공격 대상 선택
+        target = self.select_agent(opponent) # 상대 player로부터 공격 대상 선택
         attacker_weapon = self.select_weapon("Melee") # 공격자 Melee 타입 무기 선택
         defender_weapon = target.select_weapon("Melee") # 수비자 Melee 타입 무기 선택
 
