@@ -275,16 +275,7 @@ class App(QWidget):
                 agent.ap = 0
                 agent.action_available = False
                 button.setStyleSheet("")
-                if self.p1.turn == True:
-                    self.p1.turn = False
-                    self.p2.turn = True
-                    self.txtLbl1.setText("")
-                    self.txtLbl2.setText("현 차례")
-                else:
-                    self.p1.turn = True
-                    self.p2.turn = False
-                    self.txtLbl2.setText("")
-                    self.txtLbl1.setText("현 차례") 
+
             else:
                 agent.ap -= 1
             
@@ -314,61 +305,72 @@ class App(QWidget):
             if i != None:
                 self.unit_num = i[0]
                 self.unit_color = i[1]"""
+        else:
+            if self.p1.turn == True:
+                self.p1.turn = False
+                self.p2.turn = True
+                self.txtLbl1.setText("")
+                self.txtLbl2.setText("현 차례")
+            else:
+                self.p1.turn = True
+                self.p2.turn = False
+                self.txtLbl2.setText("")
+                self.txtLbl1.setText("현 차례") 
 
-        elif self.flag == "move":
-            agent = self.agent_selected
-            self.x1 = event.pos().x()
-            self.y1 = event.pos().y() - 62
+            if self.flag == "move":
+                agent = self.agent_selected
+                self.x1 = event.pos().x()
+                self.y1 = event.pos().y() - 62
 
-            if agent.ap == 0:
-                self.agent_selected = None
+                if agent.ap == 0:
+                    self.agent_selected = None
 
-            print("Hello, x: %3d, y: %3d" %(self.x1, self.y1))
-            self.target_range_test(agent.m, agent)
-            agent.pos_x = self.x1
-            agent.pos_y = self.y1
+                print("Hello, x: %3d, y: %3d" %(self.x1, self.y1))
+                self.target_range_test(agent.m, agent)
+                agent.pos_x = self.x1
+                agent.pos_y = self.y1
+                
+                self.flag = None
             
-            self.flag = None
-        
-        elif self.flag == "shoot":
-            agent = self.agent_selected
-            self.x1 = event.pos().x()
-            self.y1 = event.pos().y() - 62
+            elif self.flag == "shoot":
+                agent = self.agent_selected
+                self.x1 = event.pos().x()
+                self.y1 = event.pos().y() - 62
 
-            if (self.img[self.y1][self.x1] != agent.color).any() and ((self.img[self.y1][self.x1] == self.color[0]).all() or (self.img[self.y1][self.x1] == self.color[1]).all()):
-                distance = INFINITE
-                enemy = ''
-                if self.p1.turn:
-                    for i in self.p2.ft1.agents:
-                        if distance > dist((i.pos_x, i.pos_y), (self.x1, self.y1)):
-                            enemy = i
-                            distance = dist((i.pos_x, i.pos_y), (self.x1, self.y1))
-                if self.p2.turn:
-                    for i in self.p1.ft1.agents:
-                        if distance > dist((i.pos_x, i.pos_y), (self.x1, self.y1)):
-                            enemy = i
-                            distance = dist((i.pos_x, i.pos_y), (self.x1, self.y1))
-                print('shoot')
-                agent.shoot(enemy)
+                if (self.img[self.y1][self.x1] != agent.color).any() and ((self.img[self.y1][self.x1] == self.color[0]).all() or (self.img[self.y1][self.x1] == self.color[1]).all()):
+                    distance = INFINITE
+                    enemy = ''
+                    if self.p1.turn:
+                        for i in self.p2.ft1.agents:
+                            if distance > dist((i.pos_x, i.pos_y), (self.x1, self.y1)):
+                                enemy = i
+                                distance = dist((i.pos_x, i.pos_y), (self.x1, self.y1))
+                    if self.p2.turn:
+                        for i in self.p1.ft1.agents:
+                            if distance > dist((i.pos_x, i.pos_y), (self.x1, self.y1)):
+                                enemy = i
+                                distance = dist((i.pos_x, i.pos_y), (self.x1, self.y1))
+                    print('shoot')
+                    agent.shoot(enemy)
 
-                if agent.ap == 0:
-                    self.agent_selected = None
+                    if agent.ap == 0:
+                        self.agent_selected = None
 
-            self.flag = None
+                self.flag = None
 
-        elif self.flag == "fight":
-            agent = self.agent_selected
-            self.x1 = event.pos().x()
-            self.y1 = event.pos().y() - 62
+            elif self.flag == "fight":
+                agent = self.agent_selected
+                self.x1 = event.pos().x()
+                self.y1 = event.pos().y() - 62
 
-            if (self.img[self.y1][self.x1] != agent.color).all() and (self.img[self.y1][self.x1] in self.color).all():
+                if (self.img[self.y1][self.x1] != agent.color).all() and (self.img[self.y1][self.x1] in self.color).all():
 
-                agent.fight()
+                    agent.fight()
 
-                if agent.ap == 0:
-                    self.agent_selected = None
+                    if agent.ap == 0:
+                        self.agent_selected = None
 
-            self.flag = None
+                self.flag = None
 
     def draw_circle(self, dis = 3*INCH, agent=''):
         cv.circle(self.img, (agent.pos_x, agent.pos_y), dis * INCH, (255, 255, 255))
