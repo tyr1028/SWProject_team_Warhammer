@@ -135,7 +135,7 @@ class App(QWidget):
         self.photo_label = QLabel()
         self.photo_label.setPixmap(QPixmap('field.png'))
         self.photo_label.resize(self.img.shape[0], self.img.shape[1])
-        # self.photo_label.mousePressEvent = self.click_event
+        self.photo_label.mousePressEvent = self.click_event
 
         all_layout = QHBoxLayout()
         all_layout.addLayout(btn_layout_1)
@@ -258,6 +258,7 @@ class App(QWidget):
         else:      
             if i == 0:
                 self.flag = "move"
+                self.draw_circle(agent.m, agent)
             elif i == 1:
                 self.flag = "shoot"
             else:
@@ -265,7 +266,6 @@ class App(QWidget):
 
             if agent.ap == 1:
                 agent.ap = agent.apl
-                self.agent_selected = None
                 agent.action_available = False
                 button.setStyleSheet("")
                 if self.p1.turn == True:
@@ -297,33 +297,34 @@ class App(QWidget):
         # print("Hello, x: %3d, y: %3d" %(self.x1, self.y1))
 
     def click_event(self, event):
-        if self.count % 2 == 0:
+        if self.flag == None:
             self.x1 = event.pos().x()
             self.y1 = event.pos().y() - 62
 
-            i = self.color_check(self.x1, self.y1)
+            print("Hello, x: %3d, y: %3d" %(self.x1, self.y1))
+            """i = self.color_check(self.x1, self.y1)
             self.unit_num = None
             if i != None:
                 self.unit_num = i[0]
-                self.unit_color = i[1]
-                self.draw_circle(agent = self.location[self.unit_num])
-            if self.unit_num == None:
-                self.count -= 1
+                self.unit_color = i[1]"""
+
+        elif self.flag == "move":
+            agent = self.agent_selected
+            self.x1 = event.pos().x()
+            self.y1 = event.pos().y() - 62
+
+            if agent.ap == 0:
+                self.agent_selected = None
 
             print("Hello, x: %3d, y: %3d" %(self.x1, self.y1))
-
-        else:
-            x2 = event.pos().x()
-            y2 = event.pos().y() - 62
-
-            print("Hello, x: %3d, y: %3d" %(x2, y2))
-
-            self.target_range(self.x1, self.y1, x2, y2, 3)
-        
-        self.count += 1
+            self.target_range_test(agent.m, agent)
+            agent.pos_x = self.x1
+            agent.pos_y = self.y1
+            
+            self.flag = None
 
     def draw_circle(self, dis = 3*INCH, agent=''):
-        cv.circle(self.img, (agent.pos_x, agent.pos_y), dis * INCH, (255, 255, 255))
+        cv.circle(self.img, (agent.pos_x, agent.pos_y), dis * 30, (255, 255, 255))
         cv.imwrite('field.png', self.img)
         self.photo_label.setPixmap(QPixmap('field.png'))
 
@@ -348,7 +349,6 @@ class App(QWidget):
 
     def target_range_test(self, range = 3, agent = ''):
         self.draw_circle(agent.m, agent)
-        self.photo_label.mousePressEvent = self.click_event_test
         print(self.x1, self.y1)
         if dist((agent.pos_x, agent.pos_y), (self.x1, self.y1)) > range*INCH:
             cv.circle(self.img, (agent.pos_x, agent.pos_y), range*INCH, (0, 0, 0))
