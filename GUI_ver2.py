@@ -241,7 +241,8 @@ class App(QWidget):
         dialog.close()
             
         if i == 3:
-            agent.ap = agent.apl
+            #agent.ap = agent.apl
+            agent.ap = 0
             self.agent_selected = None
             agent.action_available = False
             button.setStyleSheet("")
@@ -265,7 +266,8 @@ class App(QWidget):
                 self.flag = "fight"
 
             if agent.ap == 1:
-                agent.ap = agent.apl
+                #agent.ap = agent.apl
+                agent.ap = 0
                 agent.action_available = False
                 button.setStyleSheet("")
                 if self.p1.turn == True:
@@ -324,7 +326,7 @@ class App(QWidget):
             self.flag = None
 
     def draw_circle(self, dis = 3*INCH, agent=''):
-        cv.circle(self.img, (agent.pos_x, agent.pos_y), dis * 30, (255, 255, 255))
+        cv.circle(self.img, (agent.pos_x, agent.pos_y), dis * INCH, (255, 255, 255))
         cv.imwrite('field.png', self.img)
         self.photo_label.setPixmap(QPixmap('field.png'))
 
