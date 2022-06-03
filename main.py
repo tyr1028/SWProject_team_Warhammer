@@ -7,7 +7,7 @@ os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
 p1 = Player()
 p2 = Player()
-ffp = firefightPhase(p1,p2)
+ffp = firefightPhase(p1, p2)
 ffp.start()
 
 app = QApplication(sys.argv)
