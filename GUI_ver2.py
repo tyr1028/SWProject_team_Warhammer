@@ -15,29 +15,11 @@ os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
 INCH = 35
 
-class MyWorker(QObject):
-
-    wait_for_input = pyqtSignal()
-    done = pyqtSignal()
-
-
-    @pyqtSlot()
-    def firstWork(self):
-        print('doing first work')
-        time.sleep(2)
-        print('first work done')
-        self.wait_for_input.emit()
-
-    @pyqtSlot()
-    def secondWork(self):
-        print('doing second work')
-        time.sleep(2)
-        print('second work done')
-        self.done.emit()
-
 class App(QWidget):
     def __init__(self, p1 = "", p2 = ""):
         super().__init__()
+        self.weapon1 = ""
+        self.weapon2 = ""
         self.p1 = p1
         self.p2 = p2
         self.initUI()
@@ -226,7 +208,7 @@ class App(QWidget):
         self.setWindowModality(Qt.ApplicationModal)
         self.setGeometry(300, 100, 600, 400)
         self.show()"""
-
+    
         dialog.setWindowTitle("Second window")
         dialog.setWindowModality(Qt.ApplicationModal)
         dialog.resize(500, 500)
@@ -267,6 +249,7 @@ class App(QWidget):
                 self.draw_circle(agent.m, agent)
             elif i == 1:
                 self.flag = "shoot"
+                dialog = WeaponDialog("Ranged", agent, self)
             else:
                 self.flag = "fight"
 
@@ -325,7 +308,7 @@ class App(QWidget):
                 agent = self.agent_selected
                 self.x1 = event.pos().x()
                 self.y1 = event.pos().y() - 62
-
+    
                 if (self.img[self.y1][self.x1] != agent.color).any() and ((self.img[self.y1][self.x1] == self.color[0]).all() or (self.img[self.y1][self.x1] == self.color[1]).all()):
                     distance = INFINITE
                     enemy = ''
@@ -334,13 +317,13 @@ class App(QWidget):
                             if distance > dist((i.pos_x, i.pos_y), (self.x1, self.y1)):
                                 enemy = i
                                 distance = dist((i.pos_x, i.pos_y), (self.x1, self.y1))
-                    if self.p2.turn:
+                    elif self.p2.turn:
                         for i in self.p1.ft1.agents:
                             if distance > dist((i.pos_x, i.pos_y), (self.x1, self.y1)):
                                 enemy = i
                                 distance = dist((i.pos_x, i.pos_y), (self.x1, self.y1))
                     print('shoot')
-                    agent.shoot(enemy)
+                    agent.shoot(enemy, self.weapon1)
 
                     if agent.ap == 0:
                         self.agent_selected = None
@@ -451,6 +434,64 @@ class App(QWidget):
         qr.moveCenter(cp)
         self.move(qr.topLeft())
 
+class WeaponDialog(QDialog):
+    def __init__(self, weapon_type, agent, app):
+        super().__init__()
+        self.setWindowTitle("Second window")
+        self.setWindowModality(Qt.ApplicationModal)
+        self.resize(500, 500)
+        #self.closeEvent = self.CloseEvent
+
+        layout = QVBoxLayout()
+        self.setLayout(layout)
+
+        self.tableWidget = QTableWidget()
+        self.tableWidget.setColumnCount(4)
+
+        weapon_list = []
+        verHeaders = []
+        self.data = {'a':[], 'ws':[], 'd':[], 'd_crit':[]}
+        for weapon in agent.weapons:
+            if weapon.type == weapon_type:
+                weapon_list.append(weapon)
+                verHeaders.append(weapon.weapon_name)
+        self.tableWidget.setRowCount(len(weapon_list))
+        for weapon in weapon_list:
+            self.data["a"].append(weapon.a)
+            self.data["ws"].append(weapon.ws)
+            self.data["d"].append(weapon.d)
+            self.data["d_crit"].append(weapon.d_crit)
+        self.tableWidget.setVerticalHeaderLabels(verHeaders)
+            
+        horHeaders = []
+        for n, key in enumerate(self.data.keys()):
+            horHeaders.append(key)
+            for m, item in enumerate(self.data[key]):
+                newitem = QTableWidgetItem(str(item))
+                self.tableWidget.setItem(m, n, newitem)
+                print(str(key) + ", " + str(item) + ", " + str(m) + ", " + str(n))
+        self.tableWidget.setHorizontalHeaderLabels(horHeaders)
+
+        
+        self.tableWidget.setEditTriggers(QAbstractItemView.NoEditTriggers)
+        self.tableWidget.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
+
+        layout.addWidget(self.tableWidget)
+
+        btn_list = []
+        for weapon in weapon_list:
+            btn = QPushButton(weapon.weapon_name, self)
+            btn_list.append(btn)
+            btn.resize(150,50)
+            btn.clicked.connect(lambda :self.get_weapon(weapon, app))
+            layout.addWidget(btn)
+
+        self.exec()
+
+    def get_weapon(self, weapon, app):
+        self.close()
+        app.weapon1 = weapon
+        
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)

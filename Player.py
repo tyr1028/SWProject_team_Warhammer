@@ -149,7 +149,7 @@ class Agent:
                 weapon_list.append(weapon)
 
         # 현재는 무기리스트를 출력해줘서 선택 입력받는 형식인데 GUI구현하면 리스트박스에서 선택하도록 수정할 예정 
-        for i in range(len(weapon_list)):
+        """for i in range(len(weapon_list)):
             result = "%2d: "%i + weapon_list[i].weapon_name
             print(result, end = " ")
         print()
@@ -158,7 +158,8 @@ class Agent:
         selected_weapon = int(input())
 
         print(weapon_list[selected_weapon].weapon_name + " 선택")
-        return weapon_list[selected_weapon]
+        return weapon_list[selected_weapon]"""
+
 
     def select_action(self):
         print("액션: ")
@@ -175,9 +176,9 @@ class Agent:
         self.pos_x = pos_x
         self.pos_y = pos_y
 
-    def shoot(self, target): # 사격 (소모 ap 아직 구현 안 함)
-        #target = self.select_agent(opponent) # 상대 player로부터 공격 대상 선택
-        weapon = self.select_weapon("Ranged") # Ranged 타입 무기 선택
+    def shoot(self, target, weapon): # 사격 (소모 ap 아직 구현 안 함) (Non GUI)
+        #target = self.select_agent(opponent) # 상대 player로부터 공격 대상 선택 (Non GUI)
+        #weapon = self.select_weapon("Ranged") # Ranged 타입 무기 선택 (Non GUI)
 
         dice_result = dice(weapon.a) # 선택한 무기의 a스탯만큼 주사위 굴림
 
@@ -240,10 +241,10 @@ class Agent:
                 target.w -= total_damage
                 print("%2d만큼의 데미지를 받아 체력이 %2d 만큼 남았습니다" %(total_damage, target.w))
 
-    def fight(self, target):
-        #target = self.select_agent(opponent) # 상대 player로부터 공격 대상 선택
-        attacker_weapon = self.select_weapon("Melee") # 공격자 Melee 타입 무기 선택
-        defender_weapon = target.select_weapon("Melee") # 수비자 Melee 타입 무기 선택
+    def fight(self, target, attacker_weapon, defender_weapon):
+        #target = self.select_agent(opponent) # 상대 player로부터 공격 대상 선택 (Non GUI)
+        #attacker_weapon = self.select_weapon("Melee") # 공격자 Melee 타입 무기 선택 (Non GUI)
+        #defender_weapon = target.select_weapon("Melee") # 수비자 Melee 타입 무기 선택(Non GUI)
 
         dice_result = dice(attacker_weapon.a) # 선택한 무기의 a스탯만큼 주사위 굴림
 
