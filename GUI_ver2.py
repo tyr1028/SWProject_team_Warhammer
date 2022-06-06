@@ -1,5 +1,4 @@
 from asyncio.windows_events import INFINITE
-from multiprocessing.connection import wait
 import os 
 import sys
 from PyQt5.QtWidgets import *
@@ -24,7 +23,8 @@ class App(QWidget):
         self.p2 = p2
         self.initUI()
         self.agent_selected = None
-        
+        self.flag = None
+
         for j in range(0, 4, 1):
             self.p1.ft1.agents[j].pos_x = 100
             self.p1.ft1.agents[j].pos_y = 100 + j * int(self.height() / 5)
@@ -42,7 +42,7 @@ class App(QWidget):
 
     def initUI(self):
         # 화면
-        self.setWindowTitle('pyqt5 demo')
+        self.setWindowTitle('Warhammer Assistance Program')
         # self.center()
         self.resize(1500, 800)   
 
@@ -150,6 +150,7 @@ class App(QWidget):
 
         tableWidget.setEditTriggers(QAbstractItemView.NoEditTriggers)
         tableWidget.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
+        tableWidget.setMaximumHeight(70)
 
         btn_move = QPushButton("일반 이동(1AP 소모)", self)		
         btn_move.resize(150,50)
@@ -208,17 +209,19 @@ class App(QWidget):
         self.setWindowModality(Qt.ApplicationModal)
         self.setGeometry(300, 100, 600, 400)
         self.show()"""
-    
-        dialog.setWindowTitle("Second window")
+
+
+        dialog.setWindowTitle("agent information")
         dialog.setWindowModality(Qt.ApplicationModal)
-        dialog.resize(500, 500)
+        dialog.resize(500, 250)
         #dialog.closeEvent = self.CloseEvent
         dialog.exec()
 
     def action(self, agent, i, dialog, button):
         if not self.agent_selected:
             self.agent_selected = agent
-            button.setStyleSheet("QPushButton{"
+            self.activate_button = button
+            self.activate_button.setStyleSheet("QPushButton{"
                                     "color: rgb(58, 134, 255);"
                                     "background-color: white;"
                                     "border: 2px solid rgb(58, 134, 255);"
@@ -232,7 +235,7 @@ class App(QWidget):
             agent.ap = 0
             self.agent_selected = None
             agent.action_available = False
-            button.setStyleSheet("")
+            self.activate_button.setStyleSheet("")
             if self.p1.turn == True:
                 self.p1.turn = False
                 self.p2.turn = True
@@ -257,7 +260,7 @@ class App(QWidget):
                 #agent.ap = agent.apl
                 agent.ap = 0
                 agent.action_available = False
-                button.setStyleSheet("")
+                self.activate_button.setStyleSheet("")
 
             else:
                 agent.ap -= 1
@@ -297,10 +300,19 @@ class App(QWidget):
                 if agent.ap == 0:
                     self.agent_selected = None
 
-                print("Hello, x: %3d, y: %3d" %(self.x1, self.y1))
-                self.target_range_test(agent.m, agent)
-                agent.pos_x = self.x1
-                agent.pos_y = self.y1
+                self.target_range_test(agent)
+                if dist((agent.pos_x, agent.pos_y), (self.x1, self.y1)) < agent.m*INCH:
+                    agent.pos_x = self.x1
+                    agent.pos_y = self.y1
+                else:
+                    agent.action_available = True
+                    agent.ap += 1
+                    self.agent_selected = agent
+                    self.activate_button.setStyleSheet("QPushButton{"
+                                    "color: rgb(58, 134, 255);"
+                                    "background-color: white;"
+                                    "border: 2px solid rgb(58, 134, 255);"
+                                "}")
                 
                 self.flag = None
             
@@ -328,6 +340,16 @@ class App(QWidget):
                     if agent.ap == 0:
                         self.agent_selected = None
 
+                else:
+                    agent.action_available = True
+                    agent.ap += 1
+                    self.agent_selected = agent
+                    self.activate_button.setStyleSheet("QPushButton{"
+                                    "color: rgb(58, 134, 255);"
+                                    "background-color: white;"
+                                    "border: 2px solid rgb(58, 134, 255);"
+                                "}")
+
                 self.flag = None
 
             elif self.flag == "fight":
@@ -335,12 +357,43 @@ class App(QWidget):
                 self.x1 = event.pos().x()
                 self.y1 = event.pos().y() - 62
 
-                if (self.img[self.y1][self.x1] != agent.color).all() and (self.img[self.y1][self.x1] in self.color).all():
+                if (self.img[self.y1][self.x1] != agent.color).any() and ((self.img[self.y1][self.x1] == self.color[0]).all() or (self.img[self.y1][self.x1] == self.color[1]).all()):
+                    distance = INFINITE
+                    enemy = ''
+                    if self.p1.turn:
+                        for i in self.p2.ft1.agents:
+                            if distance > dist((i.pos_x, i.pos_y), (self.x1, self.y1)):
+                                enemy = i
+                                distance = dist((i.pos_x, i.pos_y), (self.x1, self.y1))
+                    if self.p2.turn:
+                        for i in self.p1.ft1.agents:
+                            if distance > dist((i.pos_x, i.pos_y), (self.x1, self.y1)):
+                                enemy = i
+                                distance = dist((i.pos_x, i.pos_y), (self.x1, self.y1))
 
-                    agent.fight()
+                    if dist((agent.pos_x, agent.pos_y), (enemy.pos_x, enemy.pos_y)) <= INCH:
+                        agent.fight(enemy)
+                        if agent.ap == 0:
+                            self.agent_selected = None
+                    else:
+                        agent.action_available = True
+                        agent.ap += 1
+                        self.agent_selected = agent
+                        self.activate_button.setStyleSheet("QPushButton{"
+                                        "color: rgb(58, 134, 255);"
+                                        "background-color: white;"
+                                        "border: 2px solid rgb(58, 134, 255);"
+                                    "}")
 
-                    if agent.ap == 0:
-                        self.agent_selected = None
+                else:
+                    agent.action_available = True
+                    agent.ap += 1
+                    self.agent_selected = agent
+                    self.activate_button.setStyleSheet("QPushButton{"
+                                    "color: rgb(58, 134, 255);"
+                                    "background-color: white;"
+                                    "border: 2px solid rgb(58, 134, 255);"
+                                "}")
 
                 self.flag = None
 
@@ -380,8 +433,8 @@ class App(QWidget):
                     result = i
             return [result, j]
 
-    def target_range_test(self, range = 3, agent = ''):
-        if dist((agent.pos_x, agent.pos_y), (self.x1, self.y1)) > range*INCH:
+    def target_range_test(self, agent = ''):
+        if dist((agent.pos_x, agent.pos_y), (self.x1, self.y1)) > agent.m*INCH:
             cv.circle(self.img, (agent.pos_x, agent.pos_y), agent.m*INCH, (0, 0, 0))
             cv.imwrite('field.png', self.img)
             self.photo_label.setPixmap(QPixmap('field.png'))

@@ -11,7 +11,7 @@ cv.imwrite('field.png', img)
 
 p1 = Player()
 p2 = Player()
-ffp = firefightPhase(p1,p2)
+ffp = firefightPhase(p1, p2)
 ffp.start()
 
 app = QApplication(sys.argv)
