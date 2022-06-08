@@ -2,12 +2,14 @@ import os
 from Player import *
 from TurningPoint import *
 from GUI_ver2 import *
+import shutil
 
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
 img = cv.imread('field.png', cv.IMREAD_COLOR)
 img = np.zeros((img.shape))
 cv.imwrite('field.png', img)
+shutil.rmtree('exp')
 
 p1 = Player()
 p2 = Player()

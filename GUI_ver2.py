@@ -1,14 +1,22 @@
 from asyncio.windows_events import INFINITE
+
 import os 
 import sys
+
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
+
 import cv2 as cv
+
 from matplotlib.pyplot import table
+
 import numpy as np
 from math import *
+from yolo import detect
 import time
+from tkinter import *
+from tkinter import filedialog
 
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
@@ -17,26 +25,46 @@ INCH = 35
 class App(QWidget):
     def __init__(self, p1 = "", p2 = ""):
         super().__init__()
+        file_name = self.file_open()
         self.weapon1 = ""
         self.weapon2 = ""
         self.p1 = p1
         self.p2 = p2
-        self.initUI()
         self.agent_selected = None
         self.flag = None
 
-        for j in range(0, 4, 1):
-            self.p1.ft1.agents[j].pos_x = 100
-            self.p1.ft1.agents[j].pos_y = 100 + j * int(self.height() / 5)
-            self.p1.ft1.agents[j].color = self.color[0]
-            print(self.p1.ft1.agents[j].pos_x, self.p1.ft1.agents[j].pos_y)
-            self.p2.ft1.agents[j].pos_x = 1050
-            self.p2.ft1.agents[j].pos_y = 100 + j * int(self.height() / 5)
-            self.p2.ft1.agents[j].color = self.color[1]
+        rate_x = 1152/4032
+        rate_y = 648/3024
+
+        self.location_file = open('exp/labels/' + file_name.replace('.jpg', '.txt'), 'r')
+        cnt_0 = 0
+        cnt_1 = 0
+
+        while(True):
+            line = self.location_file.readline().replace('\n', '').split(' ')
+            if line[0] == '0':
+                self.p1.ft1.agents[cnt_0].pos_x = int((int(line[1]) + int(line[3]))/2 * rate_x)
+                self.p1.ft1.agents[cnt_0].pos_y =int((int(line[2]) + int(line[4]))/2 * rate_y)
+                cnt_0 += 1
+            elif line[0] == '1':
+                self.p2.ft1.agents[cnt_1].pos_x = int((int(line[1]) + int(line[3]))/2 * rate_x)
+                self.p2.ft1.agents[cnt_1].pos_y = int((int(line[2]) + int(line[4]))/2 * rate_y)
+                cnt_1 += 1
+
+            if cnt_0 == 4 and cnt_1 == 4:
+                break
+            # self.p1.ft1.agents[j].pos_x = 100
+            # self.p1.ft1.agents[j].pos_y = 100 + j * int(self.height() / 5)
+            # self.p1.ft1.agents[j].color = self.color[0]
+            # self.p2.ft1.agents[j].pos_x = 1050
+            # self.p2.ft1.agents[j].pos_y = 100 + j * int(self.height() / 5)
+            # self.p2.ft1.agents[j].color = self.color[1]
 
         self.count = 0
         self.x1 = 0
         self.y1 = 0
+
+        self.initUI()
 
         #print("m: %2d, apl: %2d, ga: %2d, df: %2d, sv: %2d, w: %2d" %(self.p1.ft1.agents[0].m, self.p1.ft1.agents[0].apl, self.p1.ft1.agents[0].ga, self.p1.ft1.agents[0].df, self.p1.ft1.agents[0].sv, self.p1.ft1.agents[0].w))
 
@@ -106,10 +134,8 @@ class App(QWidget):
         self.color = [[255, 255, 0], [255, 0, 255]]
         self.img = cv.imread('field.png', cv.IMREAD_COLOR)
         for j in range(4):
-            for i in range(100, self.height(), int(self.height() / 5)):
-                cv.circle(self.img, (100, i), 8, self.color[0], -1)
-            for i in range(100, self.height(), int(self.height() / 5)):
-                cv.circle(self.img, (1050, i), 8, self.color[1], -1)
+            cv.circle(self.img, (self.p1.ft1.agents[j].pos_x, self.p1.ft1.agents[j].pos_y), 8, self.color[0], -1)
+            cv.circle(self.img, (self.p2.ft1.agents[j].pos_x, self.p2.ft1.agents[j].pos_y), 8, self.color[1], -1)
         cv.imwrite('field.png', self.img)
 
         self.photo_label = QLabel()
@@ -480,6 +506,15 @@ class App(QWidget):
         '''for agent in self.p1.ft1.agents:
             if agent.'''
         pass
+
+    def file_open(self):
+        root = Tk()
+        title = 'open image'
+        root.filename = filedialog.askopenfilename(initialdir='', title=title, filetypes=(
+        ('png files', '*.png'), ('jpg files', '*.jpg'), ('all files', '*.*')))
+        detect.run(weights='yolo/best.pt', source=root.filename, save_txt=True, nosave=True, conf_thres = 0.8, project='')
+        root.destroy()
+        return root.filename.split('/')[-1]
 
     def center(self):
         qr = self.frameGeometry()
