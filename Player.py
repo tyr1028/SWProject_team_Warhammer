@@ -215,14 +215,14 @@ class Agent:
             print("수비 포인트가 같거나 더 많아서 공격이 상쇄됐습니다.")
         else:
             total_damage = 0
-            while defender_normal >= 2 and attacker_crit > 0:
+            """while defender_normal >= 2 and attacker_crit > 0:
                 print("일반수비 2개를 소모하여 치명타 1개를 상쇄(y/n): ", end ="")
                 user_input = input()
                 if user_input == "y":
                     attacker_crit -= 1
                     defender_normal -= 2
                 else:
-                    break
+                    break"""
             if defender_normal >= attacker_normal:
                 attacker_normal = 0
             else: 
