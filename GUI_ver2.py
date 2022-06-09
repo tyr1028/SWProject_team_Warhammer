@@ -40,15 +40,19 @@ class App(QWidget):
         cnt_0 = 0
         cnt_1 = 0
 
+        self.color = [[255, 255, 0], [255, 0, 255]]
+
         while(True):
             line = self.location_file.readline().replace('\n', '').split(' ')
             if line[0] == '0':
                 self.p1.ft1.agents[cnt_0].pos_x = int((int(line[1]) + int(line[3]))/2 * rate_x)
                 self.p1.ft1.agents[cnt_0].pos_y =int((int(line[2]) + int(line[4]))/2 * rate_y)
+                self.p1.ft1.agents[cnt_0].color = self.color[0]
                 cnt_0 += 1
             elif line[0] == '1':
                 self.p2.ft1.agents[cnt_1].pos_x = int((int(line[1]) + int(line[3]))/2 * rate_x)
                 self.p2.ft1.agents[cnt_1].pos_y = int((int(line[2]) + int(line[4]))/2 * rate_y)
+                self.p2.ft1.agents[cnt_1].color = self.color[1]
                 cnt_1 += 1
 
             if cnt_0 == 4 and cnt_1 == 4:
@@ -131,11 +135,10 @@ class App(QWidget):
         btn_layout_2.addWidget(btnUn7)
         btn_layout_2.addWidget(btnUn8)
 
-        self.color = [[255, 255, 0], [255, 0, 255]]
         self.img = cv.imread('field.png', cv.IMREAD_COLOR)
         for j in range(4):
-            cv.circle(self.img, (self.p1.ft1.agents[j].pos_x, self.p1.ft1.agents[j].pos_y), 8, self.color[0], -1)
-            cv.circle(self.img, (self.p2.ft1.agents[j].pos_x, self.p2.ft1.agents[j].pos_y), 8, self.color[1], -1)
+            cv.circle(self.img, (self.p1.ft1.agents[j].pos_x, self.p1.ft1.agents[j].pos_y), 8, self.p1.ft1.agents[j].color, -1)
+            cv.circle(self.img, (self.p2.ft1.agents[j].pos_x, self.p2.ft1.agents[j].pos_y), 8, self.p2.ft1.agents[j].color, -1)
         cv.imwrite('field.png', self.img)
 
         self.photo_label = QLabel()
@@ -346,8 +349,7 @@ class App(QWidget):
                 agent = self.agent_selected
                 self.x1 = event.pos().x()
                 self.y1 = event.pos().y() - 62
-    
-                if self.img[self.y1][self.x1] != agent.color and ((self.img[self.y1][self.x1] == self.color[0]).all() or (self.img[self.y1][self.x1] == self.color[1]).all()):
+                if (self.img[self.y1][self.x1] != agent.color).any() and ((self.img[self.y1][self.x1] == self.color[0]).all() or (self.img[self.y1][self.x1] == self.color[1]).all()):
                     distance = INFINITE
                     enemy = ''
                     if self.p1.turn:
