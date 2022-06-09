@@ -180,6 +180,8 @@ class Agent:
         #target = self.select_agent(opponent) # 상대 player로부터 공격 대상 선택 (Non GUI)
         #weapon = self.select_weapon("Ranged") # Ranged 타입 무기 선택 (Non GUI)
 
+        result = []
+
         dice_result = dice(weapon.a) # 선택한 무기의 a스탯만큼 주사위 굴림
 
         attacker_normal, attacker_crit, attacker_miss = 0, 0, 0
@@ -190,7 +192,7 @@ class Agent:
                 attacker_normal += 1
             else:
                 attacker_miss += 1
-        print("타격성공: %2d(평타: %2d, 치명타: %2d), 타격실패: %2d" %(attacker_normal+attacker_crit, attacker_normal, attacker_crit, attacker_miss))
+        result.append("타격성공: %2d(평타: %2d, 치명타: %2d), 타격실패: %2d" %(attacker_normal+attacker_crit, attacker_normal, attacker_crit, attacker_miss))
 
         dice_result = dice(target.df) # 수비하는 요원의 df수치 만큼 주사위 굴림
 
@@ -202,7 +204,7 @@ class Agent:
                 defender_normal += 1             # 요원의 sv 수치보다 높을 경우 일반 수비
             else:
                 defender_attacker_miss += 1
-        print("수비성공: %2d(일반수비: %2d, 치명수비: %2d), 수비실패: %2d" %(defender_normal+defender_crit, defender_normal, defender_crit, defender_attacker_miss))
+        result.append("수비성공: %2d(일반수비: %2d, 치명수비: %2d), 수비실패: %2d" %(defender_normal+defender_crit, defender_normal, defender_crit, defender_attacker_miss))
 
         if defender_crit > 0: 
             if defender_crit <= attacker_crit:   
@@ -212,7 +214,7 @@ class Agent:
                 defender_normal += defender_crit - attacker_crit
                 defender_crit, attacker_crit = 0, 0
         if (attacker_crit*2+attacker_normal) <= defender_normal:
-            print("수비 포인트가 같거나 더 많아서 공격이 상쇄됐습니다.")
+            result.append("수비 포인트가 같거나 더 많아서 공격이 상쇄됐습니다.")
         else:
             total_damage = 0
             """while defender_normal >= 2 and attacker_crit > 0:
@@ -236,10 +238,12 @@ class Agent:
             if total_damage >= target.w:
                 target.w = 0
                 target.isAlive = False
-                print("처치되었습니다")
+                result.append("처치되었습니다")
             else:
                 target.w -= total_damage
-                print("%2d만큼의 데미지를 받아 체력이 %2d 만큼 남았습니다" %(total_damage, target.w))
+                result.append("%2d만큼의 데미지를 받아 체력이 %2d 만큼 남았습니다" %(total_damage, target.w))
+
+        return result
 
     def fight(self, target, attacker_weapon, defender_weapon):
         #target = self.select_agent(opponent) # 상대 player로부터 공격 대상 선택 (Non GUI)

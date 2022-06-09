@@ -347,7 +347,7 @@ class App(QWidget):
                 self.x1 = event.pos().x()
                 self.y1 = event.pos().y() - 62
     
-                if (self.img[self.y1][self.x1] != agent.color).any() and ((self.img[self.y1][self.x1] == self.color[0]).all() or (self.img[self.y1][self.x1] == self.color[1]).all()):
+                if self.img[self.y1][self.x1] != agent.color and ((self.img[self.y1][self.x1] == self.color[0]).all() or (self.img[self.y1][self.x1] == self.color[1]).all()):
                     distance = INFINITE
                     enemy = ''
                     if self.p1.turn:
@@ -361,7 +361,9 @@ class App(QWidget):
                                 enemy = i
                                 distance = dist((i.pos_x, i.pos_y), (self.x1, self.y1))
                     print('shoot')
-                    agent.shoot(enemy, self.weapon1)
+                    result = agent.shoot(enemy, self.weapon1)
+                    s_dialog = ShootDialog(result, enemy)
+                    
 
                     if agent.ap == 0:
                         self.agent_selected = None
@@ -521,6 +523,47 @@ class App(QWidget):
         cp = QDesktopWidget().availableGeometry().center()
         qr.moveCenter(cp)
         self.move(qr.topLeft())
+
+class ShootDialog(QDialog):
+    def __init__(self, result, agent):
+        super().__init__()
+        self.setWindowTitle("Second window")
+        self.setWindowModality(Qt.ApplicationModal)
+        self.resize(500, 250)
+        #self.closeEvent = self.CloseEvent
+
+        # 테이블
+        data = {'m': agent.m,'ap': agent.ap,'ga': agent.ga,'df': agent.df
+        ,'df': agent.df, 'sv': agent.sv,'w': agent.w}
+
+        tableWidget = QTableWidget()
+        tableWidget.setRowCount(1)
+        tableWidget.setColumnCount(6)
+
+        tableWidget.setVerticalHeaderLabels([agent.type])
+        
+        horHeaders = []
+        for n, key in enumerate(data.keys()):
+            horHeaders.append(key)
+            newitem = QTableWidgetItem(str(data[key]))
+            tableWidget.setItem(0, n, newitem)
+        tableWidget.setHorizontalHeaderLabels(horHeaders)
+
+        tableWidget.setEditTriggers(QAbstractItemView.NoEditTriggers)
+        tableWidget.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
+        tableWidget.setMaximumHeight(70)
+
+        layout = QVBoxLayout()
+        layout.addWidget(tableWidget)
+        for text in result:
+            txtLbl = QLabel()
+            txtLbl.setText(text)
+            layout.addWidget(txtLbl)
+
+        self.setLayout(layout)
+    
+        self.exec()
+        
 
 class WeaponDialog(QDialog):
     def __init__(self, weapon_type, agent, app):
